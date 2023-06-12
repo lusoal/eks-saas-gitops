@@ -128,17 +128,17 @@ module "eks" {
 ################################################################################
 # Flux
 ################################################################################
-# module "flux_v2" {
-#   source = "../../modules/flux_cd"
-#   cluster_endpoint = module.eks.cluster_endpoint
-#   ca = module.eks.cluster_certificate_authority_data
-#   token = data.aws_eks_cluster_auth.this.token
-#   git_branch = var.git_branch
-#   git_username = var.git_username
-#   git_password = var.git_password
-#   git_url = var.git_url
-#   kustomization_path = var.kustomization_path
-# }
+module "flux_v2" {
+  source = "../../modules/flux_cd"
+  cluster_endpoint = module.eks.cluster_endpoint
+  ca = module.eks.cluster_certificate_authority_data
+  token = data.aws_eks_cluster_auth.this.token
+  git_branch = var.git_branch
+  git_username = var.git_username
+  git_password = var.git_password
+  git_url = var.git_url
+  kustomization_path = var.kustomization_path
+}
 
 
 

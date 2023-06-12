@@ -51,6 +51,9 @@ spec:
         kind: HelmRepository
         name: helm-tenant-chart
   values:
+    image:
+      repository: nginx
+      tag: latest
     serviceAccount:
       create: false
       name: sample-service-account
