@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tenant-1
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sample-role
+  namespace: tenant-1
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "create", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sample-role-binding
+  namespace: tenant-1
+subjects:
+- kind: ServiceAccount
+  name: sample-service-account
+  namespace: tenant-1
+roleRef:
+  kind: Role
+  name: sample-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sample-service-account
+  namespace: tenant-1
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: tenant-1
+  namespace: flux-system
+spec:
+  releaseName: tenant-1
+  targetNamespace: tenant-1
+  storageNamespace: tenant-1
+  interval: 10m0s
+  chart:
+    spec:
+      chart: helm-tenant-chart
+      version: 0.1.0
+      sourceRef:
+        kind: HelmRepository
+        name: helm-tenant-chart
+  values:
+    serviceAccount:
+      create: false
+      name: sample-service-account
+    nodeSelector:
+      node-type: applications
+    tolerations:
+      - key: "applications"
+        operator: "Exists"
+        effect: "NoSchedule"
