@@ -174,6 +174,7 @@ module "eks" {
 #   git_username = var.git_username
 #   git_password = var.git_password
 #   git_url = var.git_url
+#   kustomization_path = var.kustomization_path
 # }
 
 

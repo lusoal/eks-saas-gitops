@@ -52,3 +52,7 @@ variable "activate_notification_controller" {
 variable "activate_source_controller" {
   default = true
 }
+
+variable "kustomization_path" {
+  
+}

@@ -49,7 +49,7 @@ resource "helm_release" "flux2-sync" {
 
   set {
     name = "kustomization.spec.path"
-    value = "gitops/clusters/cluster-demo"
+    value = var.kustomization_path
   }
 
   depends_on = [helm_release.flux2, kubernetes_namespace.flux_system]
