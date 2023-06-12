@@ -24,6 +24,6 @@ variable "git_branch" {
 
 # variable "git_url" {}
 
-var "kustomization_path" {
+variable "kustomization_path" {
   default = "gitops/clusters/production"
 }

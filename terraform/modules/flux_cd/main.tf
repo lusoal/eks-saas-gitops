@@ -31,7 +31,7 @@ resource "helm_release" "flux2-sync" {
 
   set {
     name  = "secret.data"
-    value = jsonencode({
+    value = yamlencode({
       username = var.git_username
       password = var.git_password
     })
