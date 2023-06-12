@@ -59,7 +59,7 @@ spec:
     useStaticCredentials: false
     artifactRepository:
       s3:
-        bucket: my-tf-test-bucket-377362a2-ae05-1103-e970-158e9a6bfc90
+        bucket: my-tf-test-bucket-5dc0b469-b605-0f11-ddcd-c36087620657
         region: us-west-2
         endpoint: s3.amazonaws.com
     workflow:
