@@ -4,3 +4,4 @@ resources:
   - 01-metric-server.yaml
   - 02-karpenter.yaml
   - 03-argo-workflows.yaml
+  - 04-lb-controller.yaml

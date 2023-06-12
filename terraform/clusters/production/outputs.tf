@@ -54,3 +54,11 @@ output "argo_workflows_bucket_name" {
 output "argo_workflows_bucket_arn" {
   value = aws_s3_bucket.argo-artifacts.arn
 }
+
+################
+# LB Controller
+################
+
+output "lb_controller_irsa" {
+  value = module.lb-controller-irsa.iam_role_arn
+}
