@@ -24,12 +24,26 @@ resource "aws_iam_policy_attachment" "container_registry_policy" {
   name       = "KarpenterAmazonEC2ContainerRegistryReadOnly"
   roles      = [aws_iam_role.karpenter_node_role.name]
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to tags, e.g. because a management agent
+      # updates these based on some ruleset managed elsewhere.
+      roles
+    ]
+  }
 }
 
 resource "aws_iam_policy_attachment" "amazon_eks_worker_node_policy" {
   name       = "KarpenterAmazonEKSWorkerNodePolicy"
   roles      = [aws_iam_role.karpenter_node_role.name]
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to tags, e.g. because a management agent
+      # updates these based on some ruleset managed elsewhere.
+      roles
+    ]
+  }
 }
 
 resource "aws_iam_policy_attachment" "amazon_eks_cni_policy" {

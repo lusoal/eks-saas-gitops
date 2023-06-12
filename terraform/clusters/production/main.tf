@@ -120,8 +120,13 @@ module "eks" {
       ]
     },
   ]
+    eks_managed_node_group_defaults = {
+      iam_role_additional_policies = {
+        additional = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+      }
+    }
 
-  eks_managed_node_groups = {
+    eks_managed_node_groups = {
     initial = {
       instance_types = ["m5.large"]
 
