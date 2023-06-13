@@ -40,16 +40,13 @@ spec:
   chart:
     spec:
       chart: helm-tenant-chart
-      version: 0.1.1
+      version: 0.1.0
       sourceRef:
         kind: HelmRepository
         name: helm-tenant-chart
   values:
     replicaCount: 3
-    # Microsservice 1
-    image:
-      repository: nginx
-      tag: latest
+    tenantId: tenant-2
     # If needs to use to interact with Kube API or AWS Service
     serviceAccount:
       create: true
