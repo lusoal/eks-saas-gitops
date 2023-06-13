@@ -40,17 +40,13 @@ spec:
   chart:
     spec:
       chart: helm-tenant-chart
-      version: 0.1.2
+      version: 0.1.3
       sourceRef:
         kind: HelmRepository
         name: helm-tenant-chart
   values:
     replicaCount: 3
     tenantId: tenant-1
-    # Microsservice 1
-    image:
-      repository: public.ecr.aws/t9v6l2p3/gitops-saas-app-1-demo
-      tag: 1
     # If needs to use to interact with Kube API or AWS Service
     serviceAccount:
       create: true

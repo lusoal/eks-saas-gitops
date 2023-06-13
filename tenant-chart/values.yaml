@@ -7,10 +7,10 @@ replicaCount: 3
 tenantId:
 
 image:
-  repository: nginx
+  repository: public.ecr.aws/t9v6l2p3/gitops-saas-app-1-demo
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: 2
 
 imagePullSecrets: []
 nameOverride: ""
