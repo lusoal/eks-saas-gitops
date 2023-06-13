@@ -51,10 +51,6 @@ output "argo_workflows_bucket_name" {
   value = aws_s3_bucket.argo-artifacts.id
 }
 
-output "argo_workflows_bucket_arn" {
-  value = aws_s3_bucket.argo-artifacts.arn
-}
-
 ################
 # LB Controller
 ################
