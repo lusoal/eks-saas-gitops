@@ -22,7 +22,7 @@ secret:
 
 Change the `git_url` in `terraform/clusters/production/variables.tf`
 
-```json
+```hcl
 variable "git_url" {
   default = "https://github.com/YOUR_USER/eks-saas-gitops"
 }
@@ -37,6 +37,8 @@ terraform apply --auto-approve
 ```
 
 ## Change Flux yaml files using Terraform output
+
+Go to ``
 
 
 ## Push Helm Chart to ECR created registry
@@ -53,4 +55,11 @@ aws ecr get-login-password \
 Package helm chart
 
 ```bash
+helm package tenant-chart
+```
+
+Push to ECR
+
+```
+helm push helm-tenant-chart-0.1.0.tgz oci://YOUR_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/gitops-saas
 ```

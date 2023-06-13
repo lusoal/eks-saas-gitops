@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tenant-4
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tenant-4-role
+  namespace: tenant-4
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "create", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-4-role-binding
+  namespace: tenant-4
+subjects:
+- kind: ServiceAccount
+  name: tenant-4
+  namespace: tenant-4
+roleRef:
+  kind: Role
+  name: tenant-4-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: tenant-4
+  namespace: flux-system
+spec:
+  releaseName: tenant-4
+  targetNamespace: tenant-4
+  storageNamespace: tenant-4
+  interval: 10m0s
+  chart:
+    spec:
+      chart: helm-tenant-chart
+      version: 0.1.0
+      sourceRef:
+        kind: HelmRepository
+        name: helm-tenant-chart
+  values:
+    replicaCount: 3
+    tenantId: tenant-4
+    # If needs to use to interact with Kube API or AWS Service
+    serviceAccount:
+      create: true
+      name: tenant-4
+    # Create Tenant under LB, and forward based on path, annotations can change too
+    ingress:
+      enabled: true
+      hosts:
+        - host: 
+          paths:
+            - path: /tenant-4
+              pathType: Prefix
+    # Define where to go, based on Karpenter provisioner
+    nodeSelector:
+      node-type: applications
+    tolerations:
+      - key: "applications"
+        operator: "Exists"
+        effect: "NoSchedule"

@@ -4,3 +4,4 @@ resources:
   - tenant-1.yaml
   - tenant-2.yaml
   - tenant-3.yaml
+  - tenant-4.yaml
