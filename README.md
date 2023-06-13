@@ -38,10 +38,10 @@ terraform apply --auto-approve
 
 ## Change Flux yaml files using Terraform output
 
-Change ECR Repo based on your account in `/gitops/infrastructure/base/sources/tenant-chart-helm.yaml`
-Change IAM configs in `/gitops/infrastructure/production/02-karpenter.yaml`
-Change IAM configs in `/gitops/infrastructure/production/03-argo-workflows.yaml`
-Change IAM configs in `/gitops/infrastructure/production/04-lb-controller.yaml`
+- Change ECR Repo based on your account in `/gitops/infrastructure/base/sources/tenant-chart-helm.yaml`
+- Change IAM configs in `/gitops/infrastructure/production/02-karpenter.yaml`
+- Change IAM configs in `/gitops/infrastructure/production/03-argo-workflows.yaml`
+- Change IAM configs in `/gitops/infrastructure/production/04-lb-controller.yaml`
 
 
 ## Push Helm Chart to ECR created registry
