@@ -18,12 +18,18 @@ variable "git_branch" {
   default = "main"
 }
 
-# variable "git_password" {}
-
-# variable "git_username" {}
-
-# variable "git_url" {}
+variable "git_url" {
+  default = "https://github.com/lusoal/eks-saas-gitops"
+}
 
 variable "kustomization_path" {
   default = "gitops/clusters/production"
+}
+
+variable "values_path" {
+  default = "./values.yaml"
+}
+
+variable "tenant_helm_chart_repo" {
+  default = "gitops-saas/helm-tenant-chart"
 }

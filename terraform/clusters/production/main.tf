@@ -85,6 +85,7 @@ module "eks" {
       ]
     }
   ]
+  # Baseline nodes to run add-ons
   eks_managed_node_groups = {
     baseline-infra = {
       instance_types = ["m5.large"]
@@ -93,29 +94,6 @@ module "eks" {
       desired_size = 3
     }
   }
-  # fargate_profiles = {
-  #   karpenter = {
-  #     selectors = [
-  #       { namespace = "karpenter" }
-  #     ]
-  #   }
-  #   kube_system = {
-  #     name = "kube-system"
-  #     selectors = [
-  #       { namespace = "kube-system" }
-  #     ]
-  #   }
-  #   flux-system = {
-  #     selectors = [
-  #       { namespace = "flux-system" }
-  #     ]
-  #   }
-  #   argo-workflows = {
-  #     selectors = [
-  #       { namespace = "argo-workflows" }
-  #     ]
-  #   }
-  # }
 
   tags = merge(local.tags, {
     # NOTE - if creating multiple security groups with this module, only tag the
@@ -134,10 +112,9 @@ module "flux_v2" {
   ca = module.eks.cluster_certificate_authority_data
   token = data.aws_eks_cluster_auth.this.token
   git_branch = var.git_branch
-  git_username = var.git_username
-  git_password = var.git_password
   git_url = var.git_url
   kustomization_path = var.kustomization_path
+  values_path = var.values_path
 }
 
 

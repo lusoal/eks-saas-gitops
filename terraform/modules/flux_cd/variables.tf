@@ -8,12 +8,12 @@ variable "git_branch" {
   default = "main"
 }
 
-variable "git_username" {
-}
+# variable "git_username" {
+# }
 
 
-variable "git_password" {
-}
+# variable "git_password" {
+# }
 
 variable "git_url" {}
 
@@ -54,5 +54,9 @@ variable "activate_source_controller" {
 }
 
 variable "kustomization_path" {
+  
+}
+
+variable "values_path" {
   
 }

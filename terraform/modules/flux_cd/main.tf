@@ -24,18 +24,20 @@ resource "helm_release" "flux2-sync" {
   repository = "https://fluxcd-community.github.io/helm-charts"
   chart      = "flux2-sync"
 
+  values = ["${file("${var.values_path}")}"]
+
   set {
     name = "secret.create"
     value = true
   }
 
-  set {
-    name  = "secret.data"
-    value = yamlencode({
-      username = var.git_username
-      password = var.git_password
-    })
-  }
+  # set {
+  #   name  = "secret.data"
+  #   value = yamlencode({
+  #     username = var.git_username
+  #     password = var.git_password
+  #   })
+  # }
 
   set {
     name = "gitRepository.spec.ref.branch"

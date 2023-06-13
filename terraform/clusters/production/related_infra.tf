@@ -184,3 +184,11 @@ module "lb-controller-irsa" {
 ################################################################################
 # ECR repositories
 ################################################################################
+resource "aws_ecr_repository" "tenant_helm_chart" {
+  name                 = var.tenant_helm_chart_repo
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}

@@ -32,7 +32,7 @@ spec:
     settings:
       aws:
         clusterName: eks-saas-gitops
-        clusterEndpoint: https://2C484BF682A0AD55AD47ACDD7BC5B107.gr7.us-west-2.eks.amazonaws.com  # Replace
+        clusterEndpoint: https://2E7DFD0982AB47D365B39D8B398BA0DF.gr7.us-west-2.eks.amazonaws.com  # Replace
         defaultInstanceProfile: KarpenterNodeInstanceProfile-eks-saas-gitops  # Replace
         # interruptionQueueName: eks-upgrade-demo
   install: {}

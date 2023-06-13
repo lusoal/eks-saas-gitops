@@ -62,3 +62,11 @@ output "argo_workflows_bucket_arn" {
 output "lb_controller_irsa" {
   value = module.lb-controller-irsa.iam_role_arn
 }
+
+##################
+# ECR Helm Chart
+##################
+
+output "ecr_helm_chart_url" {
+  value = aws_ecr_repository.tenant_helm_chart.repository_url
+}

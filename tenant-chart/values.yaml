@@ -7,7 +7,7 @@ replicaCount: 3
 tenantId:
 
 image:
-  repository: public.ecr.aws/t9v6l2p3/gitops-saas-app-1-demo
+  repository: public.ecr.aws/t9v6l2p3/gitops-saas-app-1-demo # Public ECR Repository
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: 2
