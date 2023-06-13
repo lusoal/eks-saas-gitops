@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "tenant-chart.fullname" . }}
+  name: microsservice-1
   labels:
     {{- include "tenant-chart.labels" . | nindent 4 }}
 spec:
