@@ -59,8 +59,9 @@ spec:
       enabled: true
       hosts:
         - host: 
-            paths:
-              - path: /tenant-1
+          paths:
+            - path: /tenant-1
+              pathType: Prefix
     # Define where to go, based on Karpenter provisioner
     nodeSelector:
       node-type: applications
