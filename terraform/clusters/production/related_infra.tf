@@ -179,3 +179,8 @@ module "lb-controller-irsa" {
     }
   }
 }
+
+# TODO Provision ECR repo for Helm Chart and Microsservices
+################################################################################
+# ECR repositories
+################################################################################

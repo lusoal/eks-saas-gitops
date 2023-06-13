@@ -4,6 +4,8 @@
 
 replicaCount: 3
 
+tenantId:
+
 image:
   repository: nginx
   pullPolicy: IfNotPresent
