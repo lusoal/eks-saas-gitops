@@ -3,6 +3,8 @@
 # Declare variables to be passed into your templates.
 
 tenantId:
+nodeSelector: {}
+tolerations: []
 
 ingress:
   enabled: true
@@ -26,22 +28,11 @@ apps:
       # Overrides the image tag whose default is the chart appVersion.
       tag: 2
     serviceAccount:
-      # Specifies whether a service account should be created
       create: true
-      # Annotations to add to the service account
       annotations: {}
-      # The name of the service account to use.
-      name:
     podAnnotations: {}
     podSecurityContext: {}
-      # fsGroup: 2000
     securityContext: {}
-      # capabilities:
-      #   drop:
-      #   - ALL
-      # readOnlyRootFilesystem: true
-      # runAsNonRoot: true
-      # runAsUser: 1000
     service:
       type: ClusterIP
       port: 80
@@ -57,7 +48,4 @@ apps:
       minReplicas: 1
       maxReplicas: 100
       targetCPUUtilizationPercentage: 80
-      # targetMemoryUtilizationPercentage: 80
-    nodeSelector: {}
-    tolerations: []
     affinity: {}

@@ -56,7 +56,7 @@ spec:
               port: http
           resources:
             {{- toYaml .resources | nindent 12 }}
-      {{- with .nodeSelector }}
+      {{- with $.Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -64,7 +64,7 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .tolerations }}
+      {{- with $.Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

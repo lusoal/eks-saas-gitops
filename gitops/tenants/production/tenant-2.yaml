@@ -45,7 +45,7 @@ spec:
         kind: HelmRepository
         name: helm-tenant-chart
   values:
-    replicaCount: 3
+    # replicaCount: 3 --> not being used
     tenantId: tenant-2
     # If needs to use to interact with Kube API or AWS Service
     serviceAccount:
