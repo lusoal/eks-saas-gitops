@@ -24,8 +24,10 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/healthcheck-path: / # This will chande depending on the microsservice
     alb.ingress.kubernetes.io/group.name: tenants-lb
-    alb.ingress.kubernetes.io/conditions.rule-path3: >
-      [ { "field": "http-header","httpHeaderConfig": { "httpHeaderName": "TenantID", "values": [ "{{ .Values.tenantId }}" ] } } ]
+    alb.ingress.kubernetes.io/actions.microservice-1: >
+      {"type":"fixed-response","fixedResponseConfig":{"contentType":"text/plain","statusCode":"200","messageBody":"HTTP header TenantID need to be set"}}
+    alb.ingress.kubernetes.io/conditions.microservice-1: >
+      [{"field":"http-header","httpHeaderConfig":{"httpHeaderName": "TenantID", "values":["{{ $.Values.tenantId }}"]}}]
 spec:
   {{- if and .Values.ingress.className (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
   ingressClassName: {{ .Values.ingress.className }}
@@ -46,7 +48,7 @@ spec:
       http:
         paths:
           {{- range .paths }}
-          - path: "/{{ .Values.tenantId }}{{ .path }}"
+          - path: "{{ .path }}"
             {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
             pathType: {{ .pathType }}
             {{- end }}
