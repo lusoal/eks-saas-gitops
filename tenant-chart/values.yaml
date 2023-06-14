@@ -8,7 +8,6 @@ fullnameOverride: ""
 
 apps:
   - appName: microservice-1
-    tenantId: {{ .Values.tenantId }}
     imagePullSecrets: []
     replicaCount: 3
     image:

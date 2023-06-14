@@ -36,7 +36,7 @@
             imagePullPolicy: {{ .image.pullPolicy }}
             env:
             - name: TENANT_ID
-              value: {{ .tenantId }}
+              value: {{ $tenantId }}
             ports:
               - name: http
                 containerPort: {{ .service.port }}
