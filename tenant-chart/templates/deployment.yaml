@@ -1,66 +1,71 @@
 {{ range .Values.apps }}
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: {{ .appName }}
-    labels:
-      {{- include "tenant-chart.labels" . | nindent 4 }}
-  spec:
-    {{- if not .autoscaling.enabled }}
-    replicas: {{ .replicaCount }}
-    {{- end }}
-    selector:
-      matchLabels:
-        {{- include "tenant-chart.selectorLabels" . | nindent 6 }}
-    template:
-      metadata:
-        {{- with .podAnnotations }}
-        annotations:
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
-        labels:
-          {{- include "tenant-chart.selectorLabels" . | nindent 8 }}
-      spec:
-        {{- with .imagePullSecrets }}
-        imagePullSecrets:
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
-        serviceAccountName: {{ include "tenant-chart.serviceAccountName" . }}
-        securityContext:
-          {{- toYaml .podSecurityContext | nindent 8 }}
-        containers:
-          - name: {{ .Chart.Name }}
-            securityContext:
-              {{- toYaml .securityContext | nindent 12 }}
-            image: "{{ .image.repository }}:{{ .image.tag | default .Chart.AppVersion }}"
-            imagePullPolicy: {{ .image.pullPolicy }}
-            env:
-            - name: TENANT_ID
-              value: {{ $.Values.tenantId }}
-            ports:
-              - name: http
-                containerPort: {{ .service.port }}
-                protocol: TCP
-            livenessProbe:
-              httpGet:
-                path: /
-                port: http
-            readinessProbe:
-              httpGet:
-                path: /
-                port: http
-            resources:
-              {{- toYaml .resources | nindent 12 }}
-        {{- with .nodeSelector }}
-        nodeSelector:
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- with .affinity }}
-        affinity:
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- with .tolerations }}
-        tolerations:
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .appName }}
+  labels:
+    app.kubernetes.io/name: "{{$.Chart.Name}}-{{$.Chart.Version }}"
+    app.kubernetes.io/instance: "{{ $.Release.Name }}"
+    app.kubernetes.io/version: "{{ $.Chart.AppVersion  }}"
+    app.kubernetes.io/managed-by: "{{ $.Release.Service }}"
+spec:
+  {{- if not .autoscaling.enabled }}
+  replicas: {{ .replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "{{$.Chart.Name}}-{{$.Chart.Version }}"
+      app.kubernetes.io/instance: "{{ $.Release.Name }}"
+  template:
+    metadata:
+      {{- with .podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: "{{$.Chart.Name}}-{{$.Chart.Version }}"
+        app.kubernetes.io/instance: "{{ $.Release.Name }}"
+    spec:
+      {{- with .imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ ".serviceAccount.name" }}
+      securityContext:
+        {{- toYaml .podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ $.Chart.Name }}
+          securityContext:
+            {{- toYaml .securityContext | nindent 12 }}
+          image: "{{ .image.repository }}:{{ .image.tag | default $.Chart.AppVersion }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          env:
+          - name: TENANT_ID
+            value: "{{ $.Values.tenantId }}"
+          ports:
+            - name: http
+              containerPort: {{ .service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+      {{- with .nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
 {{ end }}

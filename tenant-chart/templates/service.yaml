@@ -1,15 +1,21 @@
+{{ range .Values.apps }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "tenant-chart.fullname" . }}
+  name: {{ .appName }}
   labels:
-    {{- include "tenant-chart.labels" . | nindent 4 }}
+    app.kubernetes.io/name: "{{$.Chart.Name}}-{{$.Chart.Version }}"
+    app.kubernetes.io/instance: "{{ $.Release.Name }}"
+    app.kubernetes.io/version: "{{ $.Chart.AppVersion  }}"
+    app.kubernetes.io/managed-by: "{{ $.Release.Service }}"
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .service.port }}
       targetPort: http
       protocol: TCP
       name: http
   selector:
-    {{- include "tenant-chart.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/name: "{{$.Chart.Name}}-{{$.Chart.Version }}"
+    app.kubernetes.io/instance: "{{ $.Release.Name }}"
+{{ end }}

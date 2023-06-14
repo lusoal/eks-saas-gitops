@@ -3,8 +3,6 @@
 # Declare variables to be passed into your templates.
 
 tenantId:
-nameOverride: ""
-fullnameOverride: ""
 
 apps:
   - appName: microservice-1
@@ -21,8 +19,7 @@ apps:
       # Annotations to add to the service account
       annotations: {}
       # The name of the service account to use.
-      # If not set and create is true, a name is generated using the fullname template
-      name: ""
+      name: "microservice-1-svc"
     podAnnotations: {}
     podSecurityContext: {}
       # fsGroup: 2000
