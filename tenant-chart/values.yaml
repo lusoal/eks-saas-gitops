@@ -19,7 +19,6 @@ apps:
       # Annotations to add to the service account
       annotations: {}
       # The name of the service account to use.
-      name: "microservice-1-svc"
     podAnnotations: {}
     podSecurityContext: {}
       # fsGroup: 2000
