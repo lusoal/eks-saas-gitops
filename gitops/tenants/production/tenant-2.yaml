@@ -50,7 +50,6 @@ spec:
     # If needs to use to interact with Kube API or AWS Service
     serviceAccount:
       create: true
-      name: tenant-2
     # Create Tenant under LB, and forward based on path, annotations can change too
     ingress:
       enabled: true
