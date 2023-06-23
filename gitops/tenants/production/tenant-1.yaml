@@ -45,20 +45,8 @@ spec:
         kind: HelmRepository
         name: helm-tenant-chart
   values:
-    replicaCount: 3
+    # replicaCount: 3 --> not being used
     tenantId: tenant-1
-    # If needs to use to interact with Kube API or AWS Service
-    serviceAccount:
-      create: true
-      name: tenant-1
-    # Create Tenant under LB, and forward based on path, annotations can change too
-    ingress:
-      enabled: true
-      hosts:
-        - host: 
-          paths:
-            - path: /tenant-1
-              pathType: Prefix
     # Define where to go, based on Karpenter provisioner
     nodeSelector:
       node-type: applications

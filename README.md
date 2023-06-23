@@ -5,6 +5,8 @@ Sample pattern using GitOps with Flux to manage multiple tenants in a single clu
 ## Pre reqs
 - terraform
 - kubectl
+- Flux CLI
+- AWS CLI
 - Helm
 - GitHub token
 - Fork this repository
@@ -34,6 +36,9 @@ Apply terraform script:
 cd terraform/clusters/production/
 terraform init
 terraform apply --auto-approve
+
+# create kubeconfig file
+aws eks update-kubeconfig --region <aws-region> --name eks-saas-gitops
 ```
 
 ## Change Flux yaml files using Terraform output
