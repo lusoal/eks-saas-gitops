@@ -17,6 +17,7 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: "{{$.Chart.Name}}-{{$.Chart.Version }}"
-    app.kubernetes.io/instance: "{{ $.Release.Name }}"
+    app: {{ .appName }}
+    # app.kubernetes.io/name: "{{$.Chart.Name}}-{{$.Chart.Version }}"
+    # app.kubernetes.io/instance: "{{ $.Release.Name }}"
 {{ end }}

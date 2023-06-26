@@ -24,10 +24,10 @@ apps:
     imagePullSecrets: []
     replicaCount: 3
     image:
-      repository: public.ecr.aws/t9v6l2p3/saas-microsservice-1:1 # Public ECR Repository
+      repository: public.ecr.aws/t9v6l2p3/saas-microsservice-1 # Public ECR Repository
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
-      tag: 2
+      tag: 1
     serviceAccount:
       create: true
       annotations: {}
@@ -54,10 +54,10 @@ apps:
     imagePullSecrets: []
     replicaCount: 3
     image:
-      repository: public.ecr.aws/t9v6l2p3/saas-microsservice-2:1 # Public ECR Repository
+      repository: public.ecr.aws/t9v6l2p3/saas-microsservice-2 # Public ECR Repository
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
-      tag: 2
+      tag: 1
     serviceAccount:
       create: true
       annotations: {}

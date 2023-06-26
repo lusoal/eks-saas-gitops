@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/instance: "{{ $.Release.Name }}"
     app.kubernetes.io/version: "{{ $.Chart.AppVersion  }}"
     app.kubernetes.io/managed-by: "{{ $.Release.Service }}"
+    app: {{ .appName }}
 spec:
   {{- if not .autoscaling.enabled }}
   replicas: {{ .replicaCount }}
@@ -17,6 +18,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: "{{$.Chart.Name}}-{{$.Chart.Version }}"
       app.kubernetes.io/instance: "{{ $.Release.Name }}"
+      app: {{ .appName }}
   template:
     metadata:
       {{- with .podAnnotations }}
@@ -26,6 +28,7 @@ spec:
       labels:
         app.kubernetes.io/name: "{{$.Chart.Name}}-{{$.Chart.Version }}"
         app.kubernetes.io/instance: "{{ $.Release.Name }}"
+        app: {{ .appName }}
     spec:
       {{- with .imagePullSecrets }}
       imagePullSecrets:
