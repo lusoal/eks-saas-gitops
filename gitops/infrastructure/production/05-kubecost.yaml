@@ -15,7 +15,7 @@ spec:
   interval: 10m0s
   chart:
     spec:
-      chart: kubecost
+      chart: cost-analyzer
       version: 1.104.1
       sourceRef:
         kind: HelmRepository
