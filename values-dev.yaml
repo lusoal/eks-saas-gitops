@@ -1,0 +1,9 @@
+tenantId: tenant-5
+
+# Define where to go, based on Karpenter provisioner, multiple provisioners different tiers
+nodeSelector:
+  node-type: applications
+tolerations:
+  - key: "applications"
+    operator: "Exists"
+    effect: "NoSchedule"

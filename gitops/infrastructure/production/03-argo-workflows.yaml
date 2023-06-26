@@ -58,7 +58,7 @@ spec:
     useStaticCredentials: false
     artifactRepository:
       s3:
-        bucket: my-tf-test-bucket-2596151a-20fc-356b-f436-8320226faddc # Replace
+        bucket: my-tf-test-bucket-686f6159-37b3-6af7-26e3-bab9166ecd4a # Replace
         region: us-west-2
         endpoint: s3.amazonaws.com
     workflow:

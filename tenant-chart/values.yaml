@@ -24,7 +24,7 @@ apps:
     imagePullSecrets: []
     replicaCount: 3
     image:
-      repository: public.ecr.aws/t9v6l2p3/gitops-saas-app-1-demo # Public ECR Repository
+      repository: public.ecr.aws/t9v6l2p3/saas-microsservice-1:1 # Public ECR Repository
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
       tag: 2
@@ -37,6 +37,36 @@ apps:
     service:
       type: ClusterIP
       port: 80
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 100
+      targetCPUUtilizationPercentage: 80
+    affinity: {}
+  - appName: microservice-2
+    imagePullSecrets: []
+    replicaCount: 3
+    image:
+      repository: public.ecr.aws/t9v6l2p3/saas-microsservice-2:1 # Public ECR Repository
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: 2
+    serviceAccount:
+      create: false
+      annotations: {}
+    podAnnotations: {}
+    podSecurityContext: {}
+    securityContext: {}
+    service:
+      type: ClusterIP
+      port: 5000
     resources:
       limits:
         cpu: 100m
