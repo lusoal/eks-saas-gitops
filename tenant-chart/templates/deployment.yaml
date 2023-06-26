@@ -1,4 +1,5 @@
 {{ range .Values.apps }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -42,6 +43,8 @@ spec:
           env:
           - name: TENANT_ID
             value: "{{ $.Values.tenantId }}"
+          - name: MICROSSERVICE_2_URL
+            value: "http://microservice-2.{{ $.Values.tenantId }}.svc.cluster.local:5000" # Internal URL
           ports:
             - name: http
               containerPort: {{ .service.port }}
