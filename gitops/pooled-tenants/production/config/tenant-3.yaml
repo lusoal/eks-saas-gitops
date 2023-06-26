@@ -1,10 +1,10 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: pooled-tenant-3
+  name: tenant-3
   namespace: flux-system
 spec:
-  releaseName: pooled-tenants
+  releaseName: tenant-3
   targetNamespace: pooled-tenants
   storageNamespace: pooled-tenants
   interval: 10m0s
