@@ -18,6 +18,7 @@ ingress:
           svcName: microservice-1
   tls: []
 
+# TODO: Define other microsservices here
 apps:
   - appName: microservice-1
     imagePullSecrets: []

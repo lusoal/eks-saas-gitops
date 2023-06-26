@@ -49,9 +49,9 @@ metadata:
   name: default
 spec:
   subnetSelector:
-      karpenter.sh/discovery: eks-saas-gitops # Define the better tag for your subnet
+      karpenter.sh/discovery: eks-saas-gitops
   securityGroupSelector:
-      karpenter.sh/discovery: eks-saas-gitops # Define the better tag for your subnet
+      karpenter.sh/discovery: eks-saas-gitops
   tags:
     managed-by: "karpenter"
     intent: "apps"

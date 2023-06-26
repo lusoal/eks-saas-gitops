@@ -85,7 +85,7 @@ module "eks" {
       ]
     }
   ]
-  # Baseline nodes to run add-ons
+  # Baseline nodes to run add-ons, control-plane SaaS Components and any other thing, other tha applications
   eks_managed_node_groups = {
     baseline-infra = {
       instance_types = ["m5.large"]
