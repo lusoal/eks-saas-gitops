@@ -19,7 +19,7 @@ variable "git_branch" {
 }
 
 variable "git_url" {
-  default = "https://github.com/tiagoReichert/eks-saas-gitops"
+  default = "https://github.com/lusoal/eks-saas-gitops"
 }
 
 variable "kustomization_path" {
