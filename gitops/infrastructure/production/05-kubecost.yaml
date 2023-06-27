@@ -26,6 +26,10 @@ spec:
         enabled: false
         proxy: false
 
+    networkCosts: # Test
+      enabled: true
+      amazon-web-services: true
+
     pricingCsv:
       enabled: false # ADD CUR Dashboard
       location:
