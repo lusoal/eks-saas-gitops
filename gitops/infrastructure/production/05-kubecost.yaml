@@ -201,9 +201,9 @@ spec:
           resources: {}
         
       kube-state-metrics:
-        disabled: false
+        disabled: true
       nodeExporter:
-        enabled: false
+        enabled: true
 
 
     reporting:
