@@ -17,9 +17,7 @@ RUN wget --quiet https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/t
     unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin && \
     rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
-# Set the working directory
-WORKDIR /app
-COPY ./* /app
+COPY . /
 # Display installed versions
-RUN terraform version && git version
+RUN terraform version && git version && mkdir -p /root/.ssh/ && ssh-keyscan github.com >> /root/.ssh/known_hosts
 

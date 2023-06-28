@@ -1,11 +1,11 @@
-#!/bin/bash
+
 
 TENANT_TEMPLATE_FILE="TENANT_TEMPLATE.yaml"
 TENANT_MANIFEST_FILE="${tenant_id}.yaml"
 
 # Create new manifests for the tenant using TENANT_TEMPLATE_FILE, check if tenant_model is pooled or siloed, and update the manifests accordingly
 if [ "$tenant_model" == "pooled" ]; then
-    cd  eks-saas-gitops/gitops/pooled-tenants/production/config/ || exit 1
+    cd  /mnt/vol/eks-saas-gitops/gitops/pooled-tenants/production/config/ || exit 1
     ls
     cp "$TENANT_TEMPLATE_FILE" "$TENANT_MANIFEST_FILE" && sed -i '' "s/TENANT_ID/${tenant_id}/g" "$TENANT_MANIFEST_FILE"
     # append a new line in kustomization.yaml file using $TENANT_MANIFEST_FILE
@@ -13,7 +13,7 @@ if [ "$tenant_model" == "pooled" ]; then
     cd ../../../../
 
 elif [ "$tenant_model" == "siloed" ]; then
-    cd  eks-saas-gitops/gitops/siloed-tenants/production/ || exit 1
+    cd  /mnt/vol/eks-saas-gitops/gitops/siloed-tenants/production/ || exit 1
     cp "$TENANT_TEMPLATE_FILE" "$TENANT_MANIFEST_FILE" && sed -i '' "s/TENANT_ID/${tenant_id}/g" "$TENANT_MANIFEST_FILE"
     printf "\n  - ${TENANT_MANIFEST_FILE}\n" >> kustomization.yaml
     cd ../../../
