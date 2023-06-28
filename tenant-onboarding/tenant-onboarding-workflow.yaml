@@ -12,6 +12,8 @@ spec:
             template: clone-repository
         - - name: create-tenant-infrastructure
             template: create-tenant-infrastructure
+        - - name: create-tenant-helm-release
+            template: create-tenant-helm-release
     - name: clone-repository
       inputs:
         parameters:
@@ -24,7 +26,7 @@ spec:
           - name: REPO_URL
             value: "git@github.com:lusoal/eks-saas-gitops.git"
       container:
-        image: "public.ecr.aws/t9v6l2p3/saas-argo-workflows-image:5"
+        image: "public.ecr.aws/t9v6l2p3/saas-argo-workflows-image:9"
         command: ["/bin/sh","-c"]
         args: ['cp /tmp/id_rsa /root/.ssh/ && chmod 600 /root/.ssh/id_rsa && ./01-tenant-clone-repo.sh {{inputs.parameters.REPO_URL}} && cp -r eks-saas-gitops /mnt/vol'] # Create Tenant infra script
         volumeMounts:
@@ -42,19 +44,38 @@ spec:
             value: "tenant-5"
           - name: AWS_REGION
             value: "us-west-2"
-          - name: TENANT_MODEL
-            value: "siloed"
-          - name: REPO_URL
-            value: "git@github.com:lusoal/eks-saas-gitops.git"
           - name: BUCKET_NAME
             value: terraform-state-tenants-saas-278129817
       container:
-        image: "public.ecr.aws/t9v6l2p3/saas-argo-workflows-image:5"
+        image: "public.ecr.aws/t9v6l2p3/saas-argo-workflows-image:9"
         command: ["/bin/sh","-c"]
-        args: ['sleep 1000000'] # Create Tenant infra script
+        args: ['./02-tenant-onboarding-infra.sh {{inputs.parameters.AWS_REGION}} {{inputs.parameters.TENANT_ID}} {{inputs.parameters.BUCKET_NAME}}'] # Create Tenant infra script
         volumeMounts:
         - name: workdir
           mountPath: /mnt/vol
+    - name: create-tenant-helm-release
+      inputs:
+        parameters:
+          - name: TENANT_ID
+            value: "tenant-5"
+          - name: TENANT_MODEL
+            value: "siloed"
+          - name: GIT_USER_EMAIL
+            value: "lucasdu@amazon.com"
+          - name: GIT_USERNAME
+            value: "lusoal"
+      container:
+        image: "public.ecr.aws/t9v6l2p3/saas-argo-workflows-image:9"
+        command: ["/bin/sh","-c"]
+        args: ['cp /tmp/id_rsa /root/.ssh/ && chmod 600 /root/.ssh/id_rsa && ./03-tenant-onboarding.sh {{inputs.parameters.TENANT_ID}} {{inputs.parameters.TENANT_MODEL}} {{inputs.parameters.GIT_USER_EMAIL}} {{inputs.parameters.GIT_USERNAME}}'] # Create Tenant infra script
+        volumeMounts:
+        - name: workdir
+          mountPath: /mnt/vol
+        - name: ssh-key
+          mountPath: /tmp/
+        env:
+          - name: GIT_SSH_COMMAND
+            value: "ssh -i /root/.ssh/id_rsa"
   entrypoint: orchestration-steps
   volumeClaimTemplates:                
   - metadata:
@@ -64,14 +85,6 @@ spec:
       resources:
         requests:
           storage: 1Gi
-  # - metadata:
-  #     name: ssh-key
-  #   spec:
-  #     accessModes: [ "ReadWriteOnce" ]
-  #     storageClassName: standard
-  #     resources:
-  #       requests:
-  #         storage: 1Gi
   volumes:
   - name: ssh-key
     secret:
