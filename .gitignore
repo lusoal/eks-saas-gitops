@@ -7,7 +7,7 @@
 ### Terraform ###
 # Local .terraform directories
 **/.terraform/*
-
+tenant-infra-main.tf
 # .tfstate files
 *.tfstate
 *.tfstate.*
