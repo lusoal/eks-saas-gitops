@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: tenant-onboarding-TENANT_ID
+  name: tenant-onboarding-tenant-5
   namespace: argo-workflows
 spec:
   templates:
@@ -10,40 +10,48 @@ spec:
       steps:
         - - name: create-tenant-infrastructure
             template: create-tenant-infrastructure
-        - - name: onboarding-new-tenant
-            template: onboarding-new-tenant
+        # - - name: onboarding-new-tenant
+        #     template: onboarding-new-tenant
     - name: create-tenant-infrastructure
       inputs:
         parameters:
           - name: TENANT_ID
-            value: ""
+            value: "tenant-5"
           - name: AWS_REGION
-            value: ""
+            value: "us-west-2"
           - name: TENANT_MODEL
-            value: ""
+            value: "siloed"
+          - name: REPO_URL
+            value: "git@github.com:lusoal/eks-saas-gitops.git"
       container:
         image: "DEFINE IMAGE"
         command: ["/bin/sh","-c"]
-        args: [''] # Create Tenant infra script
+        args: ['./01-tenant-clone-repo.sh && cp -r eks-saas-gitops /mnt/vol'] # Create Tenant infra script
         volumeMounts:
         - name: workdir
           mountPath: /mnt/vol
-    - name: onboarding-new-tenant
-      inputs:
-        parameters:
-          - name: TENANT_ID
-            value: ""
-          - name: AWS_REGION
-            value: ""
-          - name: TENANT_MODEL
-            value: ""
-      container:
-        image: "DEFINE IMAGE"
-        command: ["/bin/sh","-c"]
-        args: [''] # Create Helm Release script
-        volumeMounts:
-        - name: workdir
-          mountPath: /mnt/vol
+        - name: ssh-key
+          mountPath: /root/.ssh
+          readOnly: true
+        env:
+          - name: GIT_SSH_COMMAND
+            value: "ssh -i /root/.ssh/id_rsa"
+    # - name: onboarding-new-tenant
+    #   inputs:
+    #     parameters:
+    #       - name: TENANT_ID
+    #         value: ""
+    #       - name: AWS_REGION
+    #         value: ""
+    #       - name: TENANT_MODEL
+    #         value: ""
+    #   container:
+    #     image: "DEFINE IMAGE"
+    #     command: ["/bin/sh","-c"]
+    #     args: [''] # Create Helm Release script
+    #     volumeMounts:
+    #     - name: workdir
+    #       mountPath: /mnt/vol
   entrypoint: create-tenant-infrastructure
   volumeClaimTemplates:                
   - metadata:
@@ -54,6 +62,10 @@ spec:
         requests:
           storage: 1Gi
   serviceAccountName: full-permissions-service-account
+  volumes:
+  - name: ssh-key
+    secret:
+      secretName: github-ssh-key
   arguments:
     parameters:
       - name: k8s_version

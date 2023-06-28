@@ -19,9 +19,7 @@ RUN wget --quiet https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/t
 
 # Set the working directory
 WORKDIR /app
-
+COPY ./* /app
 # Display installed versions
 RUN terraform version && git version
 
-# Start your application
-CMD ["/bin/sh"]

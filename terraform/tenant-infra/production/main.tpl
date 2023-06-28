@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "terraform-state-tenants-saas-278129817" # Replace
+    bucket = "BUCKET_NAME" # Replace
     key    = "tenants-infra/TENANT_ID"
     region = "AWS_REGION"
   }
