@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - tenant-1.yaml
   - tenant-2.yaml
+  - tenant-5.yaml
