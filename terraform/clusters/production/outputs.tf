@@ -66,3 +66,10 @@ output "lb_controller_irsa" {
 output "ecr_helm_chart_url" {
   value = aws_ecr_repository.tenant_helm_chart.repository_url
 }
+
+#####################
+# S3 TENANT STATE TF
+#####################
+output "tenant_terraform_state_bucket_name" {
+  value = aws_s3_bucket.tenant-terraform-state-bucket.id
+}

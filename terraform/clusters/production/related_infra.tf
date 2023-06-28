@@ -210,3 +210,18 @@ module "ebs_csi_irsa_role" {
     }
   }
 }
+
+
+################################################################################
+# TERRAFORM STATE TENANT S3_BUCKET
+################################################################################
+resource "random_uuid" "uuid" {}
+
+# To store argo artifacts
+resource "aws_s3_bucket" "tenant-terraform-state-bucket" {
+  bucket = "tenant-terraform-state-bucket-${random_uuid.uuid.result}"
+
+  tags = {
+    Blueprint  = var.name
+  }
+}
