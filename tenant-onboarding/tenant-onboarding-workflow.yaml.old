@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: tenant-onboarding-__TENANT_ID__
+  name: tenant-onboarding-tenant-9
   namespace: argo-workflows
 spec:
   templates:
@@ -18,13 +18,13 @@ spec:
       inputs:
         parameters:
           - name: TENANT_ID
-            value: "__TENANT_ID__"
+            value: "tenant-9"
           - name: AWS_REGION
-            value: "__AWS_REGION__"
+            value: "us-west-2"
           - name: TENANT_MODEL
-            value: "__TENANT_MODEL__"
+            value: "siloed"
           - name: REPO_URL
-            value: "__REPO_URL__"
+            value: "git@github.com:lusoal/eks-saas-gitops.git"
       container:
         image: "public.ecr.aws/t9v6l2p3/saas-argo-workflows-image:9"
         command: ["/bin/sh","-c"]
@@ -41,11 +41,11 @@ spec:
       inputs:
         parameters:
           - name: TENANT_ID
-            value: "__TENANT_ID__"
+            value: "tenant-9"
           - name: AWS_REGION
-            value: "__AWS_REGION__"
+            value: "us-west-2"
           - name: BUCKET_NAME
-            value: "__BUCKET_NAME__"
+            value: "terraform-state-tenants-saas-278129817"
       container:
         image: "public.ecr.aws/t9v6l2p3/saas-argo-workflows-image:9"
         command: ["/bin/sh","-c"]
@@ -57,13 +57,13 @@ spec:
       inputs:
         parameters:
           - name: TENANT_ID
-            value: "__TENANT_ID__"
+            value: "tenant-9"
           - name: TENANT_MODEL
-            value: "__TENANT_MODEL__"
+            value: "siloed"
           - name: GIT_USER_EMAIL
-            value: "__GIT_USER_EMAIL__"
+            value: "lucasdu@amazon.com"
           - name: GIT_USERNAME
-            value: "__GIT_USERNAME__"
+            value: "lusoal"
       container:
         image: "public.ecr.aws/t9v6l2p3/saas-argo-workflows-image:9"
         command: ["/bin/sh","-c"]
