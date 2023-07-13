@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: tenant-onboarding-workflow-template
+  name: tenant-onboarding-template
   namespace: argo-workflows
 spec:
   serviceAccountName: full-permissions-service-account # SA with IRSA permissions
