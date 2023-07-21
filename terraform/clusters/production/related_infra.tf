@@ -153,7 +153,7 @@ resource "random_uuid" "uuid" {}
 
 # To store argo artifacts
 resource "aws_s3_bucket" "argo-artifacts" {
-  bucket = "my-tf-test-bucket-${random_uuid.uuid.result}"
+  bucket = "saasgitops-argo-${random_uuid.uuid.result}"
 
   tags = {
     Blueprint  = var.name
@@ -192,6 +192,32 @@ resource "aws_ecr_repository" "tenant_helm_chart" {
     scan_on_push = true
   }
 }
+resource "aws_ecr_repository" "argoworkflow_container" {
+  name                 = var.argoworkflow_container_repo
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+resource "aws_ecr_repository" "microservice_1_container" {
+  name                 = var.microservice_1_container_repo
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+resource "aws_ecr_repository" "microservice_2_container" {
+  name                 = var.microservice_2_container_repo
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+
 
 ################################################################################
 # EBS CSI Driver IRSA
@@ -215,11 +241,10 @@ module "ebs_csi_irsa_role" {
 ################################################################################
 # TERRAFORM STATE TENANT S3_BUCKET
 ################################################################################
-resource "random_uuid" "uuid" {}
 
 # To store argo artifacts
 resource "aws_s3_bucket" "tenant-terraform-state-bucket" {
-  bucket = "tenant-terraform-state-bucket-${random_uuid.uuid.result}"
+  bucket = "saasgitops-terraform-${random_uuid.uuid.result}"
 
   tags = {
     Blueprint  = var.name

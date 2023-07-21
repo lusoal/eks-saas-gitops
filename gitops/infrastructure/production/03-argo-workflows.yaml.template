@@ -18,7 +18,7 @@ metadata:
   name: full-permissions-service-account
   namespace: argo-workflows
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::756050056314:role/argo-workflows-irsa # Replace
+    eks.amazonaws.com/role-arn: {ARGO_WORKFLOW_IRSA}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -58,7 +58,7 @@ spec:
     useStaticCredentials: false
     artifactRepository:
       s3:
-        bucket: my-tf-test-bucket-686f6159-37b3-6af7-26e3-bab9166ecd4a # Replace
+        bucket: {ARGO_WORKFLOW_BUCKET}
         region: us-west-2
         endpoint: s3.amazonaws.com
     workflow:
@@ -66,7 +66,7 @@ spec:
         create: true
         name: "argo-workflow"
         annotations:
-          eks.amazonaws.com/role-arn: arn:aws:iam::756050056314:role/argo-workflows-irsa # Replace
+          eks.amazonaws.com/role-arn: {ARGO_WORKFLOW_IRSA}
       rbac:
         create: true
     controller:
@@ -76,7 +76,7 @@ spec:
       serviceType: LoadBalancer
       serviceAccount:
         annotations: 
-          eks.amazonaws.com/role-arn: arn:aws:iam::756050056314:role/argo-workflows-irsa # Replace
+          eks.amazonaws.com/role-arn: {ARGO_WORKFLOW_IRSA}
       extraArgs:
       - --auth-mode=server # This is for demonstration purposes only
   install: {}

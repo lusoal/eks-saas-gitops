@@ -3,7 +3,7 @@ variable "name" {
 }
 
 variable "aws_region" {
-  default = "us-west-2"
+  default = "{AWS_REGION}"
 } 
 
 variable "vpc_cidr" {
@@ -19,7 +19,7 @@ variable "git_branch" {
 }
 
 variable "git_url" {
-  default = "https://github.com/lusoal/eks-saas-gitops"
+  default = "https://github.com/{GITHUB_USERNAME}/eks-saas-gitops"
 }
 
 variable "kustomization_path" {
@@ -32,4 +32,16 @@ variable "values_path" {
 
 variable "tenant_helm_chart_repo" {
   default = "gitops-saas/helm-tenant-chart"
+}
+
+variable "argoworkflow_container_repo" {
+  default = "argoworkflow-container"
+}
+
+variable "microservice_1_container_repo" {
+  default = "microservice1-container"
+}
+
+variable "microservice_2_container_repo" {
+  default = "microservice2-container"
 }
