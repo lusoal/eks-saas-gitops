@@ -7,5 +7,5 @@ metadata:
 spec:
   type: "oci"
   interval: 1m0s
-  url: 288533429543.dkr.ecr.us-west-2.amazonaws.com/gitops-saas
+  url: oci://288533429543.dkr.ecr.us-west-2.amazonaws.com/gitops-saas/
   provider: aws
