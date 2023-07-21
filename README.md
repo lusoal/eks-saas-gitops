@@ -40,7 +40,7 @@ terraform apply --auto-approve
 aws eks update-kubeconfig --region $AWS_REGION --name eks-saas-gitops
 ```
 
-## Change Flux yaml files using Terraform output
+## Change Templates using Terraform output
 ```bash
 sed -e "s|{TENANT_CHART_HELM_REPO}|$(terraform output -raw ecr_helm_chart_url | sed 's|\(.*\)/.*|\1|')|g" "../../../gitops/infrastructure/base/sources/tenant-chart-helm.yaml.template" > ../../../gitops/infrastructure/base/sources/tenant-chart-helm.yaml
 
