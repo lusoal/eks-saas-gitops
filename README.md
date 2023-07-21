@@ -13,61 +13,57 @@ Sample pattern using GitOps with Flux to manage multiple tenants in a single clu
 
 ## Install
 
-Change variables in `terraform/clusters/production/values.yaml`:
+Change terraform template to use your GitHub fork:
 
-```yaml
-secret:
-  data:
-    username: "YOUR_USERNAME"
-    password: "YOUR_GITHUB_TOKEN"
-```
+```bash
+GITHUB_USERNAME=<your-github-username>
+GITHUB_PASSWORD=<your-github-token>
+AWS_REGION=us-west-2
 
-Change the `git_url` in `terraform/clusters/production/variables.tf`
+cd terraform/clusters/production/
 
-```hcl
-variable "git_url" {
-  default = "https://github.com/YOUR_USER/eks-saas-gitops"
-}
+sed -e "s|{GITHUB_USERNAME}|$GITHUB_USERNAME|g" "./values.yaml.template" > values.yaml
+sed -i '' -e "s|{GITHUB_PASSWORD}|$GITHUB_PASSWORD|g" "./values.yaml"
+sed -e "s|{GITHUB_USERNAME}|$GITHUB_USERNAME|g" "./variables.tf.template" > variables.tf
+sed -i '' -e "s|{AWS_REGION}|$AWS_REGION|g" "./variables.tf"
 ```
 
 Apply terraform script:
 
 ```bash
-cd terraform/clusters/production/
+
 terraform init
 terraform apply --auto-approve
 
 # create kubeconfig file
-aws eks update-kubeconfig --region <aws-region> --name eks-saas-gitops
+aws eks update-kubeconfig --region $AWS_REGION --name eks-saas-gitops
 ```
 
 ## Change Flux yaml files using Terraform output
+```bash
+sed -e "s|{TENANT_CHART_HELM_REPO}|$(terraform output -raw ecr_helm_chart_url | sed 's|\(.*\)/.*|\1|')|g" "../../../gitops/infrastructure/base/sources/tenant-chart-helm.yaml.template" > ../../../gitops/infrastructure/base/sources/tenant-chart-helm.yaml
 
-- Change ECR Repo based on your account in `/gitops/infrastructure/base/sources/tenant-chart-helm.yaml`
-- Change IAM configs in `/gitops/infrastructure/production/02-karpenter.yaml`
-- Change IAM configs in `/gitops/infrastructure/production/03-argo-workflows.yaml`
-- Change IAM configs in `/gitops/infrastructure/production/04-lb-controller.yaml`
+sed -e "s|{KARPENTER_CONTROLLER_IRSA}|$(terraform output -raw karpenter_irsa)|g" "../../../gitops/infrastructure/production/02-karpenter.yaml.template" > ../../../gitops/infrastructure/production/02-karpenter.yaml
+sed -i '' -e "s|{EKS_CLUSTER_ENDPOINT}|$(terraform output -raw cluster_endpoint)|g" "../../../gitops/infrastructure/production/02-karpenter.yaml"
+sed -i '' -e "s|{KARPENTER_INSTANCE_PROFILE}|$(terraform output -raw karpenter_instance_profile)|g" "../../../gitops/infrastructure/production/02-karpenter.yaml"
 
+sed -e "s|{ARGO_WORKFLOW_IRSA}|$(terraform output -raw argo_workflows_irsa)|g" "../../../gitops/infrastructure/production/03-argo-workflows.yaml.template" > ../../../gitops/infrastructure/production/03-argo-workflows.yaml
+sed -i '' -e "s|{ARGO_WORKFLOW_BUCKET}|$(terraform output -raw argo_workflows_bucket_name)|g" "../../../gitops/infrastructure/production/03-argo-workflows.yaml"
 
-## Push Helm Chart to ECR created registry
+sed -e "s|{LB_CONTROLLER_IRSA}|$(terraform output -raw lb_controller_irsa)|g" "../../../gitops/infrastructure/production/04-lb-controller.yaml.template" > ../../../gitops/infrastructure/production/04-lb-controller.yaml
+```
 
+## Build & Push Helm Chart and Containers to ECR
 Login into ECR registry
-
 ```bash
+HELM_CHART_ECR=$(terraform output -raw ecr_helm_chart_url)
+cd ../../../
+
 aws ecr get-login-password \
-     --region YOUR_AWS_REGION | helm registry login \
+     --region $AWS_REGION | helm registry login \
      --username AWS \
-     --password-stdin YOUR_REPO_URL
-```
-
-Package helm chart
-
-```bash
+     --password-stdin $HELM_CHART_ECR
+     
 helm package tenant-chart
-```
-
-Push to ECR
-
-```
-helm push helm-tenant-chart-0.1.0.tgz oci://YOUR_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/gitops-saas
+helm push helm-tenant-chart-0.1.0.tgz oci://$(echo $HELM_CHART_ECR | sed 's|\(.*\)/.*|\1|')
 ```
