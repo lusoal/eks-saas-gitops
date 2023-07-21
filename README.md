@@ -98,3 +98,16 @@ finch build --platform linux/amd64 -t $ARGO_WORKFLOW_ECR tenant-onboarding
 finch push $ARGO_WORKFLOW_ECR
 
 ```
+
+## Add new files to Git and Push
+```bash
+git add terraform/clusters/production/values.yaml
+git add terraform/clusters/production/variables.tf
+git add gitops/infrastructure/base/sources/tenant-chart-helm.yaml
+git add gitops/infrastructure/production/02-karpenter.yaml
+git add gitops/infrastructure/production/03-argo-workflows.yaml
+git add gitops/infrastructure/production/04-lb-controller.yaml
+git add tenant-onboarding/tenant-onboarding-workflow-template.yaml
+git commit -m 'Initial Setup'
+git push
+```
