@@ -10,6 +10,7 @@ Sample pattern using GitOps with Flux to manage multiple tenants in a single clu
 - Helm
 - GitHub token
 - Fork this repository
+- finch
 
 ## Install
 
@@ -51,19 +52,49 @@ sed -e "s|{ARGO_WORKFLOW_IRSA}|$(terraform output -raw argo_workflows_irsa)|g" "
 sed -i '' -e "s|{ARGO_WORKFLOW_BUCKET}|$(terraform output -raw argo_workflows_bucket_name)|g" "../../../gitops/infrastructure/production/03-argo-workflows.yaml"
 
 sed -e "s|{LB_CONTROLLER_IRSA}|$(terraform output -raw lb_controller_irsa)|g" "../../../gitops/infrastructure/production/04-lb-controller.yaml.template" > ../../../gitops/infrastructure/production/04-lb-controller.yaml
+
+sed -i '' -e "s|{ARGO_WORKFLOW_CONTAINER}|$(terraform output -raw ecr_argoworkflow_container)|g" "../../../tenant-onboarding/tenant-onboarding-workflow-template.yaml"
 ```
 
 ## Build & Push Helm Chart and Containers to ECR
-Login into ECR registry
 ```bash
 HELM_CHART_ECR=$(terraform output -raw ecr_helm_chart_url)
+ARGO_WORKFLOW_ECR=$(terraform output -raw ecr_argoworkflow_container)
+MICROSERVICE_1_ECR=$(terraform output -raw ecr_microservice_1_container)
+MICROSERVICE_2_ECR=$(terraform output -raw ecr_microservice_2_container)
+
 cd ../../../
 
+# Build & Push Tenant Helm Chart
 aws ecr get-login-password \
      --region $AWS_REGION | helm registry login \
      --username AWS \
-     --password-stdin $HELM_CHART_ECR
-     
+     --password-stdin $HELM_CHART_ECR     
 helm package tenant-chart
 helm push helm-tenant-chart-0.1.0.tgz oci://$(echo $HELM_CHART_ECR | sed 's|\(.*\)/.*|\1|')
+
+# Build & Push Microservice 1 Container
+aws ecr get-login-password \
+     --region $AWS_REGION | finch login \
+     --username AWS \
+     --password-stdin $MICROSERVICE_1_ECR    
+finch build --platform linux/amd64 -t $MICROSERVICE_1_ECR tenants-microsservices/microsservice-1
+finch push $MICROSERVICE_1_ECR
+
+# Build & Push Microservice 2 Container
+aws ecr get-login-password \
+     --region $AWS_REGION | finch login \
+     --username AWS \
+     --password-stdin $MICROSERVICE_2_ECR    
+finch build --platform linux/amd64 -t $MICROSERVICE_2_ECR tenants-microsservices/microsservice-2
+finch push $MICROSERVICE_2_ECR
+
+# Build & Push ArgoWorkflow Container
+aws ecr get-login-password \
+     --region $AWS_REGION | finch login \
+     --username AWS \
+     --password-stdin $ARGO_WORKFLOW_ECR    
+finch build --platform linux/amd64 -t $ARGO_WORKFLOW_ECR tenant-onboarding
+finch push $ARGO_WORKFLOW_ECR
+
 ```

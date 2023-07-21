@@ -33,3 +33,15 @@ variable "values_path" {
 variable "tenant_helm_chart_repo" {
   default = "gitops-saas/helm-tenant-chart"
 }
+
+variable "argoworkflow_container_repo" {
+  default = "argoworkflow-container"
+}
+
+variable "microservice_1_container_repo" {
+  default = "microservice1-container"
+}
+
+variable "microservice_2_container_repo" {
+  default = "microservice2-container"
+}
