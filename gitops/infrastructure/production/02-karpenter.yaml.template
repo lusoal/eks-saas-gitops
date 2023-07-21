@@ -28,12 +28,12 @@ spec:
       create: true
       name: karpenter # SA created via eksctl or
       annotations:
-        eks.amazonaws.com/role-arn: arn:aws:iam::288533429543:role/karpenter_controller
+        eks.amazonaws.com/role-arn: {KARPENTER_CONTROLLER_IRSA}
     settings:
       aws:
         clusterName: eks-saas-gitops
-        clusterEndpoint: https://E8F1F5D838F551E63A16F3E7F6EF02E6.gr7.us-west-2.eks.amazonaws.com
-        defaultInstanceProfile: KarpenterNodeInstanceProfile-eks-saas-gitops
+        clusterEndpoint: {EKS_CLUSTER_ENDPOINT}
+        defaultInstanceProfile: {KARPENTER_INSTANCE_PROFILE}
         # interruptionQueueName: eks-upgrade-demo
   install: {}
  

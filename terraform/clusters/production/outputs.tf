@@ -67,6 +67,18 @@ output "ecr_helm_chart_url" {
   value = aws_ecr_repository.tenant_helm_chart.repository_url
 }
 
+output "ecr_argoworkflow_container" {
+  value = aws_ecr_repository.argoworkflow_container.repository_url
+}
+
+output "ecr_microservice_1_container" {
+  value = aws_ecr_repository.microservice_1_container.repository_url
+}
+
+output "ecr_microservice_2_container" {
+  value = aws_ecr_repository.microservice_2_container.repository_url
+}
+
 #####################
 # S3 TENANT STATE TF
 #####################
