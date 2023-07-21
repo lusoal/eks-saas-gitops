@@ -55,6 +55,10 @@ module "eks" {
   cluster_version                = var.cluster_version
   cluster_endpoint_public_access = true
 
+  node_security_group_tags = {
+    "kubernetes.io/cluster/${local.name}" = null
+  }
+
   cluster_addons = {
     aws-ebs-csi-driver = {
       service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn 
