@@ -55,5 +55,5 @@ spec:
         operator: "Exists"
         effect: "NoSchedule"
     apps:
-      - producer
-      - consumer
+      - name: producer
+      - name: consumer

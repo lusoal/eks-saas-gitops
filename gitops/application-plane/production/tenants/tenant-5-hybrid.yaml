@@ -55,4 +55,4 @@ spec:
         operator: "Exists"
         effect: "NoSchedule"
     apps:
-      - producer
+      - name: producer
