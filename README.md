@@ -75,7 +75,7 @@ aws ecr get-login-password \
      --username AWS \
      --password-stdin $HELM_CHART_ECR     
 helm package tenant-chart
-helm push helm-tenant-chart-0.1.0.tgz oci://$(echo $HELM_CHART_ECR | sed 's|\(.*\)/.*|\1|')
+helm push helm-tenant-chart-0.0.1.tgz oci://$(echo $HELM_CHART_ECR | sed 's|\(.*\)/.*|\1|')
 
 # Build & Push Producer Container
 aws ecr get-login-password \
