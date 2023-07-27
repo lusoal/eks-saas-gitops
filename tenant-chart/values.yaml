@@ -5,6 +5,9 @@
 tenantId:
 nodeSelector: {}
 tolerations: []
+apps:
+  - name: producer
+  - name: consumer
 
 ingress:
   enabled: true
@@ -22,40 +25,38 @@ ingress:
           svcName: producer
   tls: []
 
-apps:
-  - appName: producer
-    deploy: true
-    imagePullSecrets: []
-    replicaCount: 3
-    image:
-      repository: public.ecr.aws/t9v6l2p3/saas-microsservice-1 #TODO Public ECR Repository
-      pullPolicy: IfNotPresent
-      # Overrides the image tag whose default is the chart appVersion.
-      tag: 1
-    serviceAccount:
-      create: true
-      annotations: {}
-    podAnnotations: {}
-    podSecurityContext: {}
-    securityContext: {}
-    service:
-      type: ClusterIP
-      port: 80
-    resources:
-      limits:
-        cpu: 100m
-        memory: 128Mi
-      requests:
-        cpu: 100m
-        memory: 128Mi
-    autoscaling:
-      enabled: false
-      minReplicas: 1
-      maxReplicas: 100
-      targetCPUUtilizationPercentage: 80
-    affinity: {}
-  - appName: consumer
-    deploy: true
+producer:
+  imagePullSecrets: []
+  replicaCount: 3
+  image:
+    repository: public.ecr.aws/t9v6l2p3/saas-microsservice-1 #TODO Public ECR Repository
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 1
+  serviceAccount:
+    create: true
+    annotations: {}
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    type: ClusterIP
+    port: 80
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+  affinity: {}
+
+consumer:
     imagePullSecrets: []
     replicaCount: 3
     image:

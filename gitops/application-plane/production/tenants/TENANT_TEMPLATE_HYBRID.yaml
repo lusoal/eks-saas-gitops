@@ -56,4 +56,3 @@ spec:
         effect: "NoSchedule"
     apps:
       - producer
-      - consumer
