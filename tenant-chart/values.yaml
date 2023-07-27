@@ -12,19 +12,23 @@ ingress:
   hosts:
     - host:
       paths:
-        - path: /
+        - path: /consumer
           pathType: Prefix
           svcPort: 80
-          svcName: microservice-1
+          svcName: consumer
+        - path: /producer
+          pathType: Prefix
+          svcPort: 80
+          svcName: producer
   tls: []
 
-# TODO: Define other microsservices here
 apps:
-  - appName: microservice-1
+  - appName: producer
+    deploy: true
     imagePullSecrets: []
     replicaCount: 3
     image:
-      repository: public.ecr.aws/t9v6l2p3/saas-microsservice-1 # Public ECR Repository
+      repository: public.ecr.aws/t9v6l2p3/saas-microsservice-1 #TODO Public ECR Repository
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
       tag: 1
@@ -50,11 +54,12 @@ apps:
       maxReplicas: 100
       targetCPUUtilizationPercentage: 80
     affinity: {}
-  - appName: microservice-2
+  - appName: consumer
+    deploy: true
     imagePullSecrets: []
     replicaCount: 3
     image:
-      repository: public.ecr.aws/t9v6l2p3/saas-microsservice-2 # Public ECR Repository
+      repository: public.ecr.aws/t9v6l2p3/saas-microsservice-2 #TODO Public ECR Repository
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
       tag: 1
