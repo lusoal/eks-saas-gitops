@@ -1,8 +1,9 @@
 {{- if .Values.ingress.enabled -}}
+{{ range .Values.apps }}
 ---
-{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion)) }}
-  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
-  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
+{{- if and $.Values.ingress.className (not (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey $.Values.ingress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set $.Values.ingress.annotations "kubernetes.io/ingress.class" $.Values.ingress.className}}
   {{- end }}
 {{- end }}
 {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion -}}
@@ -14,7 +15,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: "{{.Values.tenantId}}-ingress"
+  name: "{{$.Values.tenantId}}-ingress-{{ .name }}"
   labels:
     app.kubernetes.io/name: "{{$.Chart.Name}}-{{$.Chart.Version }}"
     app.kubernetes.io/instance: "{{ $.Release.Name }}"
@@ -23,46 +24,35 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/healthcheck-path: / # This will chande depending on the microsservice
-    alb.ingress.kubernetes.io/group.name: tenants-lb
-    alb.ingress.kubernetes.io/actions.microservice-1: >
+    alb.ingress.kubernetes.io/healthcheck-path: /{{ .name }} # This will chande depending on the microsservice
+    alb.ingress.kubernetes.io/group.name: tenants-lb-{{ .name }}
+    alb.ingress.kubernetes.io/actions.{{ .name }}: >
       {"type":"fixed-response","fixedResponseConfig":{"contentType":"text/plain","statusCode":"200","messageBody":"HTTP header TenantID need to be set"}}
-    alb.ingress.kubernetes.io/conditions.microservice-1: >
+    alb.ingress.kubernetes.io/conditions.{{ .name }}: >
       [{"field":"http-header","httpHeaderConfig":{"httpHeaderName": "TenantID", "values":["{{ $.Values.tenantId }}"]}}]
 spec:
-  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
-  ingressClassName: {{ .Values.ingress.className }}
-  {{- end }}
-  {{- if .Values.ingress.tls }}
-  tls:
-    {{- range .Values.ingress.tls }}
-    - hosts:
-        {{- range .hosts }}
-        - {{ . | quote }}
-        {{- end }}
-      secretName: {{ .secretName }}
-    {{- end }}
+  {{- if and $.Values.ingress.className (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ $.Values.ingress.className }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
-          {{- range .paths }}
-          - path: "{{ .path }}"
+          - path: "/{{ .name }}"
             {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
-            pathType: {{ .pathType }}
+            pathType: Prefix
             {{- end }}
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ .svcName }}
+                name: {{ .name }}
                 port:
-                  number: {{ .svcPort }}
+                  number: 80
               {{- else }}
-              serviceName: {{ .svcName }}
-              servicePort: {{ .svcPort }}
+              serviceName: {{ .name }}
+              servicePort: 80
               {{- end }}
           {{- end }}
     {{- end }}
-{{- end }}
+
+

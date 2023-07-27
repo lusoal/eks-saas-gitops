@@ -82,16 +82,16 @@ aws ecr get-login-password \
      --region $AWS_REGION | finch login \
      --username AWS \
      --password-stdin $PRODUCER_ECR    
-finch build --platform linux/amd64 -t $PRODUCER_ECR:1 tenants-microsservices/producer
-finch push $PRODUCER_ECR:1
+finch build --platform linux/amd64 -t $PRODUCER_ECR:0.1 tenants-microsservices/producer
+finch push $PRODUCER_ECR:0.1
 
 # Build & Push Consumer Container
 aws ecr get-login-password \
      --region $AWS_REGION | finch login \
      --username AWS \
      --password-stdin $CONSUMER_ECR    
-finch build --platform linux/amd64 -t $CONSUMER_ECR:1 tenants-microsservices/consumer
-finch push $CONSUMER_ECR:1
+finch build --platform linux/amd64 -t $CONSUMER_ECR:0.1 tenants-microsservices/consumer
+finch push $CONSUMER_ECR:0.1
 
 # Build & Push ArgoWorkflow Container
 aws ecr get-login-password \

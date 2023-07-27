@@ -29,7 +29,7 @@ producer:
   imagePullSecrets: []
   replicaCount: 3
   image:
-    repository: {PRODUCER_ECR}:1
+    repository: {PRODUCER_ECR}
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: 1
@@ -60,7 +60,7 @@ consumer:
     imagePullSecrets: []
     replicaCount: 3
     image:
-      repository: {CONSUMER_ECR}:1
+      repository: {CONSUMER_ECR}
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
       tag: 1
@@ -72,7 +72,7 @@ consumer:
     securityContext: {}
     service:
       type: ClusterIP
-      port: 5000
+      port: 80
     resources:
       limits:
         cpu: 100m

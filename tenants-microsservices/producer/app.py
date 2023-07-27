@@ -1,11 +1,10 @@
 from flask import Flask
 from flask import jsonify
 import os
-import requests
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/producer")
 def index():
     tenant_id = os.environ.get("TENANT_ID")
     microsservice_version = "1.0.0"
