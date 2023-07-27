@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: tenant-11
+  name: pool-1
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: tenant-11-role
-  namespace: tenant-11
+  name: pooled-tenants-role
+  namespace: pool-1
 rules:
 - apiGroups: [""]
   resources: ["pods"]
@@ -16,26 +16,26 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: tenant-11-role-binding
-  namespace: tenant-11
+  name: pooled-tenants-role-binding
+  namespace: pool-1
 subjects:
 - kind: ServiceAccount
-  name: tenant-11
-  namespace: tenant-11
+  name: pooled-tenants
+  namespace: pool-1
 roleRef:
   kind: Role
-  name: tenant-11-role
+  name: pooled-tenants-role
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: tenant-11
+  name: pooled-tenants
   namespace: flux-system
 spec:
-  releaseName: tenant-11
-  targetNamespace: tenant-11
-  storageNamespace: tenant-11
+  releaseName: pooled-tenants
+  targetNamespace: pool-1
+  storageNamespace: pool-1
   interval: 10m0s
   chart:
     spec:
@@ -45,8 +45,9 @@ spec:
         kind: HelmRepository
         name: helm-tenant-chart
   values:
-    # replicaCount: 3 --> not being used
-    tenantId: tenant-11
+    ingress:
+      enabled: false
+    tenantId: pool-1
     # Define where to go, based on Karpenter provisioner
     nodeSelector:
       node-type: applications
