@@ -35,10 +35,9 @@ spec:
   ingressClassName: {{ $.Values.ingress.className }}
   {{- end }}
   rules:
-    - host: {{ .host | quote }}
-      http:
+    - http:
         paths:
-          - path: "/{{ .name }}"
+          - path: /{{ .name }}
             {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
             pathType: Prefix
             {{- end }}
