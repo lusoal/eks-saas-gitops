@@ -5,8 +5,8 @@ metadata:
   namespace: flux-system
 spec:
   releaseName: tenant-4
-  targetNamespace: pooled-tenants
-  storageNamespace: pooled-tenants
+  targetNamespace: pool-1
+  storageNamespace: pool-1
   interval: 10m0s
   chart:
     spec:
