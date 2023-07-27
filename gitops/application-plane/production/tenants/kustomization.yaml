@@ -5,4 +5,4 @@ resources:
   - tenant-2-silo.yaml
   - tenant-3-pool.yaml
   - tenant-4-pool.yaml
-  - tenant-5-silo.yaml
+  - tenant-5-hybrid.yaml

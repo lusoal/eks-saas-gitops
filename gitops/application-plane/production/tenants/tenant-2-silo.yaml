@@ -57,3 +57,6 @@ spec:
       - key: "applications"
         operator: "Exists"
         effect: "NoSchedule"
+    apps:
+      - producer
+      - consumer
