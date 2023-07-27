@@ -29,7 +29,7 @@ producer:
   imagePullSecrets: []
   replicaCount: 3
   image:
-    repository: 534833512759.dkr.ecr.us-west-2.amazonaws.com/producer-container:1
+    repository: {PRODUCER_ECR}:1
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: 1
@@ -60,7 +60,7 @@ consumer:
     imagePullSecrets: []
     replicaCount: 3
     image:
-      repository: 534833512759.dkr.ecr.us-west-2.amazonaws.com/consumer-container:1
+      repository: {CONSUMER_ECR}:1
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
       tag: 1

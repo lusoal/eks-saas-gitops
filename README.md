@@ -54,14 +54,18 @@ sed -i '' -e "s|{ARGO_WORKFLOW_BUCKET}|$(terraform output -raw argo_workflows_bu
 sed -e "s|{LB_CONTROLLER_IRSA}|$(terraform output -raw lb_controller_irsa)|g" "../../../gitops/infrastructure/production/04-lb-controller.yaml.template" > ../../../gitops/infrastructure/production/04-lb-controller.yaml
 
 sed -i '' -e "s|{ARGO_WORKFLOW_CONTAINER}|$(terraform output -raw ecr_argoworkflow_container)|g" "../../../tenant-onboarding/tenant-onboarding-workflow-template.yaml"
+
+sed -e "s|{CONSUMER_ECR}|$(terraform output -raw ecr_consumer_container)|g" "../../../tenant-chart/values.yaml.template" > ../../../tenant-chart/values.yaml
+sed -i '' -e "s|{PRODUCER_ECR}|$(terraform output -raw ecr_producer_container)|g" "../../../tenant-chart/values.yaml"
+
 ```
 
 ## Build & Push Helm Chart and Containers to ECR
 ```bash
 HELM_CHART_ECR=$(terraform output -raw ecr_helm_chart_url)
 ARGO_WORKFLOW_ECR=$(terraform output -raw ecr_argoworkflow_container)
-MICROSERVICE_1_ECR=$(terraform output -raw ecr_microservice_1_container)
-MICROSERVICE_2_ECR=$(terraform output -raw ecr_microservice_2_container)
+PRODUCER_ECR=$(terraform output -raw ecr_producer_container)
+CONSUMER_ECR=$(terraform output -raw ecr_consumer_container)
 
 cd ../../../
 
@@ -73,21 +77,21 @@ aws ecr get-login-password \
 helm package tenant-chart
 helm push helm-tenant-chart-0.1.0.tgz oci://$(echo $HELM_CHART_ECR | sed 's|\(.*\)/.*|\1|')
 
-# Build & Push Microservice 1 Container
+# Build & Push Producer Container
 aws ecr get-login-password \
      --region $AWS_REGION | finch login \
      --username AWS \
-     --password-stdin $MICROSERVICE_1_ECR    
-finch build --platform linux/amd64 -t $MICROSERVICE_1_ECR tenants-microsservices/microsservice-1
-finch push $MICROSERVICE_1_ECR
+     --password-stdin $PRODUCER_ECR    
+finch build --platform linux/amd64 -t $PRODUCER_ECR:1 tenants-microsservices/producer
+finch push $PRODUCER_ECR:1
 
-# Build & Push Microservice 2 Container
+# Build & Push Consumer Container
 aws ecr get-login-password \
      --region $AWS_REGION | finch login \
      --username AWS \
-     --password-stdin $MICROSERVICE_2_ECR    
-finch build --platform linux/amd64 -t $MICROSERVICE_2_ECR tenants-microsservices/microsservice-2
-finch push $MICROSERVICE_2_ECR
+     --password-stdin $CONSUMER_ECR    
+finch build --platform linux/amd64 -t $CONSUMER_ECR:1 tenants-microsservices/consumer
+finch push $CONSUMER_ECR:1
 
 # Build & Push ArgoWorkflow Container
 aws ecr get-login-password \

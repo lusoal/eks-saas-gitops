@@ -200,16 +200,16 @@ resource "aws_ecr_repository" "argoworkflow_container" {
     scan_on_push = true
   }
 }
-resource "aws_ecr_repository" "microservice_1_container" {
-  name                 = var.microservice_1_container_repo
+resource "aws_ecr_repository" "consumer_container" {
+  name                 = var.consumer_container_repo
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
     scan_on_push = true
   }
 }
-resource "aws_ecr_repository" "microservice_2_container" {
-  name                 = var.microservice_2_container_repo
+resource "aws_ecr_repository" "producer_container" {
+  name                 = var.producer_container_repo
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {

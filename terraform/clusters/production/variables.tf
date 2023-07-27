@@ -38,10 +38,10 @@ variable "argoworkflow_container_repo" {
   default = "argoworkflow-container"
 }
 
-variable "microservice_1_container_repo" {
-  default = "microservice1-container"
+variable "producer_container_repo" {
+  default = "producer-container"
 }
 
-variable "microservice_2_container_repo" {
-  default = "microservice2-container"
+variable "consumer_container_repo" {
+  default = "consumer-container"
 }
