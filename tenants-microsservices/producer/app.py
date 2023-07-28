@@ -1,15 +1,17 @@
 from flask import Flask
 from flask import jsonify
+from flask import request
 import os
 
 app = Flask(__name__)
 
 @app.route("/producer")
 def index():
-    tenant_id = os.environ.get("TENANT_ID")
+    environment = os.environ.get("TENANT_ID")
     microsservice_version = "1.0.0"
+    tenant_id = request.headers.get('tenantID')
 
-    message = {"tenant_id": tenant_id, "microsservice_version": microsservice_version, "microservice": "producer"}
+    message = {"tenant_id": tenant_id, "environment": environment, "microsservice_version": microsservice_version, "microserice": "consumer"}
     return jsonify(message)
 
 

@@ -30,10 +30,40 @@ roleRef:
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: TENANT_ID
+  name: TENANT_ID-pool
   namespace: flux-system
 spec:
-  releaseName: TENANT_ID
+  releaseName: TENANT_ID-pool
+  targetNamespace: POOL_NAMESPACE
+  storageNamespace: POOL_NAMESPACE
+  interval: 10m0s
+  chart:
+    spec:
+      chart: helm-tenant-chart
+      version: 0.0.1
+      sourceRef:
+        kind: HelmRepository
+        name: helm-tenant-chart
+  values:
+    tenantId: TENANT_ID
+    nodeSelector:
+      node-type: applications
+    tolerations:
+      - key: "applications"
+        operator: "Exists"
+        effect: "NoSchedule"
+    apps:
+      - name: consumer
+    deployApps: false
+    deployIngress: true
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: TENANT_ID-silo
+  namespace: flux-system
+spec:
+  releaseName: TENANT_ID-silo
   targetNamespace: TENANT_ID
   storageNamespace: TENANT_ID
   interval: 10m0s
