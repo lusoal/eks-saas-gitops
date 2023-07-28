@@ -13,6 +13,7 @@ apps:
 ingress:
   enabled: true
   className: "alb"
+  pathType: Prefix
   tls: []
 
 deployApps: true
