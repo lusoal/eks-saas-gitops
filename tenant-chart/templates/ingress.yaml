@@ -25,7 +25,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/healthcheck-path: /{{ .name }} # This will chande depending on the microsservice
-    alb.ingress.kubernetes.io/group.name: tenants-lb-{{ .name }}
+    alb.ingress.kubernetes.io/group.name: tenants-lb
     alb.ingress.kubernetes.io/actions.{{ .name }}: >
       {"type":"fixed-response","fixedResponseConfig":{"contentType":"text/plain","statusCode":"200","messageBody":"HTTP header TenantID need to be set"}}
     alb.ingress.kubernetes.io/conditions.{{ .name }}: >
@@ -39,7 +39,7 @@ spec:
         paths:
           - path: /{{ .name }}
             {{- if and $.Values.ingress.pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
-            pathType: {{  $.Values.ingress.pathType }}
+            pathType: {{$.Values.ingress.pathType}}
             {{- end }}
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}

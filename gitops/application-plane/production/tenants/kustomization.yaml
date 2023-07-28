@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - tenant-3-pool.yaml
   - tenant-2-silo.yaml
+  - tenant-5-hybrid.yaml
