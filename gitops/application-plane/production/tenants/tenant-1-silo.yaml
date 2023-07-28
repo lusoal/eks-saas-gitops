@@ -58,3 +58,4 @@ spec:
       - name: producer
       - name: consumer
     deployApps: true
+    deployIngress: true

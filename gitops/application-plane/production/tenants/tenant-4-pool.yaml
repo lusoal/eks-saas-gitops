@@ -23,3 +23,5 @@ spec:
       - name: producer
       - name: consumer
     deployApps: false
+    deployIngress: true
+

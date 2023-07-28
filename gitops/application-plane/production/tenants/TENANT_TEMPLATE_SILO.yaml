@@ -45,9 +45,7 @@ spec:
         kind: HelmRepository
         name: helm-tenant-chart
   values:
-    # replicaCount: 3 --> not being used
     tenantId: TENANT_ID
-    # Define where to go, based on Karpenter provisioner
     nodeSelector:
       node-type: applications
     tolerations:
@@ -58,3 +56,4 @@ spec:
       - name: producer
       - name: consumer
     deployApps: true
+    deployIngress: true

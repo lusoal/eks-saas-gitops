@@ -16,10 +16,9 @@ spec:
         kind: HelmRepository
         name: helm-tenant-chart
   values:
-    ingress:
-      enabled: true
     tenantId: TENANT_ID
     apps:
       - name: producer
       - name: consumer
     deployApps: false
+    deployIngress: true

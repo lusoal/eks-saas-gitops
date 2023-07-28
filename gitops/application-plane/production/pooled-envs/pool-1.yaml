@@ -45,8 +45,6 @@ spec:
         kind: HelmRepository
         name: helm-tenant-chart
   values:
-    ingress:
-      enabled: false
     tenantId: pool-1
     # Define where to go, based on Karpenter provisioner
     nodeSelector:
@@ -55,3 +53,5 @@ spec:
       - key: "applications"
         operator: "Exists"
         effect: "NoSchedule"
+    deployApps: true
+    deployIngress: false
