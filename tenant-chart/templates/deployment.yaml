@@ -1,3 +1,4 @@
+{{- if .Values.deployApps -}}
 {{ range .Values.apps }}
 ---
 apiVersion: apps/v1
@@ -69,4 +70,5 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{ end }}
 {{ end }}

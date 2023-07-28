@@ -18,6 +18,8 @@ spec:
   values:
     ingress:
       enabled: true
-    # replicaCount: 3 --> not being used
     tenantId: tenant-3
-    apps: []
+    apps:
+      - name: producer
+      - name: consumer
+    deployApps: false

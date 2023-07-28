@@ -1,3 +1,4 @@
+{{- if .Values.deployApps -}}
 {{ range .Values.apps }}
   {{- if (index $.Values .name).autoscaling.enabled }}
 ---
@@ -28,4 +29,5 @@ spec:
         targetAverageUtilization: {{ (index $.Values .name).autoscaling.targetMemoryUtilizationPercentage }}
       {{- end }}
   {{- end }}
+{{ end }}
 {{ end }}

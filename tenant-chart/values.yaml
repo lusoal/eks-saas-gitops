@@ -5,6 +5,7 @@
 tenantId:
 nodeSelector: {}
 tolerations: []
+
 apps:
   - name: producer
   - name: consumer
@@ -13,6 +14,8 @@ ingress:
   enabled: true
   className: "alb"
   tls: []
+
+deployApps: true
 
 producer:
   imagePullSecrets: []

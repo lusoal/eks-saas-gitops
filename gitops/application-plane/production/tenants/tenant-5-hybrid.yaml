@@ -56,3 +56,4 @@ spec:
         effect: "NoSchedule"
     apps:
       - name: producer
+    deployApps: true

@@ -60,3 +60,4 @@ spec:
     apps:
       - name: producer
       - name: consumer
+    deployApps: true
