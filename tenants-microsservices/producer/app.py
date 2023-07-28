@@ -11,7 +11,7 @@ def index():
     microsservice_version = "1.0.0"
     tenant_id = request.headers.get('tenantID')
 
-    message = {"tenant_id": tenant_id, "environment": environment, "microsservice_version": microsservice_version, "microserice": "consumer"}
+    message = {"tenant_id": tenant_id, "environment": environment, "microsservice_version": microsservice_version, "microserice": "producer"}
     return jsonify(message)
 
 
