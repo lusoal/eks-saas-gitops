@@ -71,12 +71,12 @@ output "ecr_argoworkflow_container" {
   value = aws_ecr_repository.argoworkflow_container.repository_url
 }
 
-output "ecr_microservice_1_container" {
-  value = aws_ecr_repository.microservice_1_container.repository_url
+output "ecr_consumer_container" {
+  value = aws_ecr_repository.consumer_container.repository_url
 }
 
-output "ecr_microservice_2_container" {
-  value = aws_ecr_repository.microservice_2_container.repository_url
+output "ecr_producer_container" {
+  value = aws_ecr_repository.producer_container.repository_url
 }
 
 #####################
