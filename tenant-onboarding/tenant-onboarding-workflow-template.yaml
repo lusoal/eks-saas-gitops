@@ -24,10 +24,12 @@ spec:
       container:
         image: "{ARGO_WORKFLOW_CONTAINER}"
         command: ["/bin/sh","-c"]
-        args: ['./02-tenant-onboarding-infra.sh {{workflow.parameters.AWS_REGION}} {{workflow.parameters.TENANT_ID}} {{workflow.parameters.BUCKET_NAME}}'] # Create Tenant infra script
+        args: ['./02-tenant-onboarding-infra.sh {{workflow.parameters.TENANT_ID}} {{workflow.parameters.TENANT_MODEL}} {{workflow.parameters.GIT_USER_EMAIL}} {{workflow.parameters.GIT_USERNAME}}'] # Create Tenant infra script
         volumeMounts:
         - name: workdir
           mountPath: /mnt/vol
+        - name: ssh-key
+          mountPath: /tmp/
     - name: create-tenant-helm-release
       container:
         image: "{ARGO_WORKFLOW_CONTAINER}"

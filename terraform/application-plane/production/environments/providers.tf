@@ -2,9 +2,9 @@
 
 terraform {
   backend "s3" {
-    bucket = "terraform-state-tenants-saas-278129817" # Replace
+    bucket = "terraform-state-tenants-saas-278129817" # Replace during install.sh
     key    = "tenants-infra/tenants-infra.json"
-    region = "us-west-2"
+    region = "us-west-2" # Replace during install.sh
   }
 }
 
