@@ -14,7 +14,7 @@ Sample pattern using GitOps with Flux to manage multiple tenants in a single clu
 
 ## Deploy EKS cluster and add-ons
 
-Change terraform template to use your GitHub fork:
+Change terraform cluster template to use your GitHub fork:
 
 ```bash
 export GITHUB_USERNAME=<your-github-username>
@@ -35,14 +35,18 @@ Apply terraform script:
 cd $TF_PATH_CLUSTER
 terraform init
 terraform apply --auto-approve
+```
 
+Update Kubeconfig
+
+```bash
 # create kubeconfig file
 aws eks update-kubeconfig --region $AWS_REGION --name eks-saas-gitops
 ```
 
 ## Create pool-1 application infrastructure
 
-This infrastructure is needed to support the applications
+Change terraform pool-1 infrastructure template to use your GitHub fork:
 
 ```bash
 export TERRAFORM_STATE_BUCKET=$(terraform output -raw argo_workflows_bucket_name)
@@ -63,6 +67,8 @@ terraform apply --auto-approve
 
 ## Change Templates using Terraform output
 
+In this step we will change values needed by our add-ons in order to work with our new EKS cluster.
+
 ```bash
 cd ../../../clusters/production
 
@@ -81,7 +87,6 @@ sed -i '' -e "s|{ARGO_WORKFLOW_CONTAINER}|$(terraform output -raw ecr_argoworkfl
 
 sed -e "s|{CONSUMER_ECR}|$(terraform output -raw ecr_consumer_container)|g" "../../../tenant-chart/values.yaml.template" > ../../../tenant-chart/values.yaml
 sed -i '' -e "s|{PRODUCER_ECR}|$(terraform output -raw ecr_producer_container)|g" "../../../tenant-chart/values.yaml"
-
 ```
 
 ## Build & Push Helm Chart and Containers to ECR
