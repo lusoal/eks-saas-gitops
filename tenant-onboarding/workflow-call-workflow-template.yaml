@@ -14,8 +14,6 @@ spec:
         value: "us-west-2"
       - name: TENANT_ID
         value: "tenant-18"
-      - name: BUCKET_NAME
-        value: "terraform-state-tenants-saas-278129817"
       - name: TENANT_MODEL
         value: "siloed"
       - name: GIT_USER_EMAIL
