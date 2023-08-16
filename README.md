@@ -17,9 +17,9 @@ Sample pattern using GitOps with Flux to manage multiple tenants in a single clu
 Change terraform template to use your GitHub fork:
 
 ```bash
-GITHUB_USERNAME=<your-github-username>
-GITHUB_PASSWORD=<your-github-token>
-AWS_REGION=us-west-2
+export GITHUB_USERNAME=<your-github-username>
+export GITHUB_PASSWORD=<your-github-token>
+export AWS_REGION=us-west-2
 
 cd terraform/clusters/production/
 
@@ -32,7 +32,6 @@ sed -i '' -e "s|{AWS_REGION}|$AWS_REGION|g" "./variables.tf"
 Apply terraform script:
 
 ```bash
-
 terraform init
 terraform apply --auto-approve
 
