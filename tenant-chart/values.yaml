@@ -5,33 +5,20 @@
 tenantId:
 nodeSelector: {}
 tolerations: []
+
 apps:
   - name: producer
   - name: consumer
 
-ingress:
-  enabled: true
-  className: "alb"
-  hosts:
-    - host:
-      paths:
-        - path: /consumer
-          pathType: Prefix
-          svcPort: 80
-          svcName: consumer
-        - path: /producer
-          pathType: Prefix
-          svcPort: 80
-          svcName: producer
-  tls: []
+deployApps: true
+deployIngress: true
 
 producer:
   imagePullSecrets: []
   replicaCount: 3
   image:
     repository: 054678736585.dkr.ecr.us-west-2.amazonaws.com/producer-container
-    pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
+    pullPolicy: Always
     tag: 0.1
   serviceAccount:
     create: true
@@ -55,14 +42,18 @@ producer:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
   affinity: {}
+  ingress:
+    enabled: true
+    className: "alb"
+    pathType: Prefix
+    tls: []
 
 consumer:
     imagePullSecrets: []
     replicaCount: 3
     image:
       repository: 054678736585.dkr.ecr.us-west-2.amazonaws.com/consumer-container
-      pullPolicy: IfNotPresent
-      # Overrides the image tag whose default is the chart appVersion.
+      pullPolicy: Always
       tag: 0.1
     serviceAccount:
       create: true
@@ -86,3 +77,8 @@ consumer:
       maxReplicas: 100
       targetCPUUtilizationPercentage: 80
     affinity: {}
+    ingress:
+      enabled: true
+      className: "alb"
+      pathType: Prefix
+      tls: [ ]
