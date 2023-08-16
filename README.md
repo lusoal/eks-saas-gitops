@@ -42,6 +42,8 @@ aws eks update-kubeconfig --region $AWS_REGION --name eks-saas-gitops
 
 ## Create pool-1 application infrastructure
 
+This infrastructure is needed to support the applications
+
 ```bash
 export TERRAFORM_STATE_BUCKET=$(terraform output -raw argo_workflows_bucket_name)
 echo $TERRAFORM_STATE_BUCKET
@@ -60,7 +62,10 @@ terraform apply --auto-approve
 ```
 
 ## Change Templates using Terraform output
+
 ```bash
+cd ../../../clusters/production
+
 sed -e "s|{TENANT_CHART_HELM_REPO}|$(terraform output -raw ecr_helm_chart_url | sed 's|\(.*\)/.*|\1|')|g" "../../../gitops/infrastructure/base/sources/tenant-chart-helm.yaml.template" > ../../../gitops/infrastructure/base/sources/tenant-chart-helm.yaml
 
 sed -e "s|{KARPENTER_CONTROLLER_IRSA}|$(terraform output -raw karpenter_irsa)|g" "../../../gitops/infrastructure/production/02-karpenter.yaml.template" > ../../../gitops/infrastructure/production/02-karpenter.yaml
