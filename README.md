@@ -32,6 +32,7 @@ sed -i '' -e "s|{AWS_REGION}|$AWS_REGION|g" "${TF_PATH_CLUSTER}/variables.tf"
 Apply terraform script:
 
 ```bash
+cd $TF_PATH_CLUSTER
 terraform init
 terraform apply --auto-approve
 
