@@ -21,12 +21,12 @@ export GITHUB_USERNAME=<your-github-username>
 export GITHUB_PASSWORD=<your-github-token>
 export AWS_REGION=us-west-2
 
-cd terraform/clusters/production/
+export TF_PATH_CLUSTER=terraform/clusters/production
 
-sed -e "s|{GITHUB_USERNAME}|$GITHUB_USERNAME|g" "./values.yaml.template" > values.yaml
-sed -i '' -e "s|{GITHUB_PASSWORD}|$GITHUB_PASSWORD|g" "./values.yaml"
-sed -e "s|{GITHUB_USERNAME}|$GITHUB_USERNAME|g" "./variables.tf.template" > variables.tf
-sed -i '' -e "s|{AWS_REGION}|$AWS_REGION|g" "./variables.tf"
+sed -e "s|{GITHUB_USERNAME}|$GITHUB_USERNAME|g" "${TF_PATH_CLUSTER}/values.yaml.template" > $TF_PATH_CLUSTER/values.yaml
+sed -i '' -e "s|{GITHUB_PASSWORD}|$GITHUB_PASSWORD|g" "${TF_PATH_CLUSTER}/values.yaml"
+sed -e "s|{GITHUB_USERNAME}|$GITHUB_USERNAME|g" "${TF_PATH_CLUSTER}/variables.tf.template" > $TF_PATH_CLUSTER/variables.tf
+sed -i '' -e "s|{AWS_REGION}|$AWS_REGION|g" "${TF_PATH_CLUSTER}/variables.tf"
 ```
 
 Apply terraform script:
