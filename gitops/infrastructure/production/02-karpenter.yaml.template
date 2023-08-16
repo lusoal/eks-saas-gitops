@@ -9,7 +9,6 @@ metadata:
   name: karpenter
   namespace: flux-system
   labels:
-    self-managed-add-on: true
     add-on-version: "v0.27.3"
 spec:
   releaseName: karpenter

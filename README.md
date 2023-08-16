@@ -49,7 +49,7 @@ aws eks update-kubeconfig --region $AWS_REGION --name eks-saas-gitops
 Change terraform pool-1 infrastructure template to use your GitHub fork:
 
 ```bash
-export TERRAFORM_STATE_BUCKET=$(terraform output -raw argo_workflows_bucket_name)
+export TERRAFORM_STATE_BUCKET=$(terraform output -raw tenant_terraform_state_bucket_name)
 echo $TERRAFORM_STATE_BUCKET
 
 cd ../../application-plane/production/environments
@@ -72,29 +72,35 @@ In this step we will change values needed by our add-ons in order to work with o
 ```bash
 cd ../../../clusters/production
 
+# Change Flux HelmRepository to use private chart
 sed -e "s|{TENANT_CHART_HELM_REPO}|$(terraform output -raw ecr_helm_chart_url | sed 's|\(.*\)/.*|\1|')|g" "../../../gitops/infrastructure/base/sources/tenant-chart-helm.yaml.template" > ../../../gitops/infrastructure/base/sources/tenant-chart-helm.yaml
 
+# Change Karpenter values.yaml file to cluster specifics
 sed -e "s|{KARPENTER_CONTROLLER_IRSA}|$(terraform output -raw karpenter_irsa)|g" "../../../gitops/infrastructure/production/02-karpenter.yaml.template" > ../../../gitops/infrastructure/production/02-karpenter.yaml
 sed -i '' -e "s|{EKS_CLUSTER_ENDPOINT}|$(terraform output -raw cluster_endpoint)|g" "../../../gitops/infrastructure/production/02-karpenter.yaml"
 sed -i '' -e "s|{KARPENTER_INSTANCE_PROFILE}|$(terraform output -raw karpenter_instance_profile)|g" "../../../gitops/infrastructure/production/02-karpenter.yaml"
 
+# Change argo-workflows values.yaml file to environment specifics (IRSA and S3)
 sed -e "s|{ARGO_WORKFLOW_IRSA}|$(terraform output -raw argo_workflows_irsa)|g" "../../../gitops/infrastructure/production/03-argo-workflows.yaml.template" > ../../../gitops/infrastructure/production/03-argo-workflows.yaml
 sed -i '' -e "s|{ARGO_WORKFLOW_BUCKET}|$(terraform output -raw argo_workflows_bucket_name)|g" "../../../gitops/infrastructure/production/03-argo-workflows.yaml"
 
+# Change LB controller values.yaml file to use created IRSA
 sed -e "s|{LB_CONTROLLER_IRSA}|$(terraform output -raw lb_controller_irsa)|g" "../../../gitops/infrastructure/production/04-lb-controller.yaml.template" > ../../../gitops/infrastructure/production/04-lb-controller.yaml
 
+# Change Argo Workflow CRD to use container in private registry
 sed -i '' -e "s|{ARGO_WORKFLOW_CONTAINER}|$(terraform output -raw ecr_argoworkflow_container)|g" "../../../tenant-onboarding/tenant-onboarding-workflow-template.yaml"
 
+# Change microsservices image on tenant-chart default values.yaml
 sed -e "s|{CONSUMER_ECR}|$(terraform output -raw ecr_consumer_container)|g" "../../../tenant-chart/values.yaml.template" > ../../../tenant-chart/values.yaml
 sed -i '' -e "s|{PRODUCER_ECR}|$(terraform output -raw ecr_producer_container)|g" "../../../tenant-chart/values.yaml"
 ```
 
 ## Build & Push Helm Chart and Containers to ECR
 ```bash
-HELM_CHART_ECR=$(terraform output -raw ecr_helm_chart_url)
-ARGO_WORKFLOW_ECR=$(terraform output -raw ecr_argoworkflow_container)
-PRODUCER_ECR=$(terraform output -raw ecr_producer_container)
-CONSUMER_ECR=$(terraform output -raw ecr_consumer_container)
+export HELM_CHART_ECR=$(terraform output -raw ecr_helm_chart_url)
+export ARGO_WORKFLOW_ECR=$(terraform output -raw ecr_argoworkflow_container)
+export PRODUCER_ECR=$(terraform output -raw ecr_producer_container)
+export CONSUMER_ECR=$(terraform output -raw ecr_consumer_container)
 
 cd ../../../
 
