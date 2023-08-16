@@ -43,7 +43,8 @@ aws eks update-kubeconfig --region $AWS_REGION --name eks-saas-gitops
 ## Create pool-1 application infrastructure
 
 ```bash
-export TERRAFORM_STATE_BUCKET=<bucket-to-persist-state>
+export TERRAFORM_STATE_BUCKET=$(terraform output -raw argo_workflows_bucket_name)
+echo $TERRAFORM_STATE_BUCKET
 
 cd ../../application-plane/production/environments
 
