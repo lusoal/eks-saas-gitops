@@ -12,27 +12,27 @@ Sample pattern using GitOps with Flux to manage multiple tenants in a single clu
 - Fork this repository
 - finch
 
-## Install
+## Deploy EKS cluster and add-ons
 
 Change terraform template to use your GitHub fork:
 
 ```bash
-GITHUB_USERNAME=<your-github-username>
-GITHUB_PASSWORD=<your-github-token>
-AWS_REGION=us-west-2
+export GITHUB_USERNAME=<your-github-username>
+export GITHUB_PASSWORD=<your-github-token>
+export AWS_REGION=us-west-2
 
-cd terraform/clusters/production/
+export TF_PATH_CLUSTER=terraform/clusters/production
 
-sed -e "s|{GITHUB_USERNAME}|$GITHUB_USERNAME|g" "./values.yaml.template" > values.yaml
-sed -i '' -e "s|{GITHUB_PASSWORD}|$GITHUB_PASSWORD|g" "./values.yaml"
-sed -e "s|{GITHUB_USERNAME}|$GITHUB_USERNAME|g" "./variables.tf.template" > variables.tf
-sed -i '' -e "s|{AWS_REGION}|$AWS_REGION|g" "./variables.tf"
+sed -e "s|{GITHUB_USERNAME}|$GITHUB_USERNAME|g" "${TF_PATH_CLUSTER}/values.yaml.template" > $TF_PATH_CLUSTER/values.yaml
+sed -i '' -e "s|{GITHUB_PASSWORD}|$GITHUB_PASSWORD|g" "${TF_PATH_CLUSTER}/values.yaml"
+sed -e "s|{GITHUB_USERNAME}|$GITHUB_USERNAME|g" "${TF_PATH_CLUSTER}/variables.tf.template" > $TF_PATH_CLUSTER/variables.tf
+sed -i '' -e "s|{AWS_REGION}|$AWS_REGION|g" "${TF_PATH_CLUSTER}/variables.tf"
 ```
 
 Apply terraform script:
 
 ```bash
-
+cd $TF_PATH_CLUSTER
 terraform init
 terraform apply --auto-approve
 
@@ -40,8 +40,32 @@ terraform apply --auto-approve
 aws eks update-kubeconfig --region $AWS_REGION --name eks-saas-gitops
 ```
 
-## Change Templates using Terraform output
+## Create pool-1 application infrastructure
+
+This infrastructure is needed to support the applications
+
 ```bash
+export TERRAFORM_STATE_BUCKET=$(terraform output -raw argo_workflows_bucket_name)
+echo $TERRAFORM_STATE_BUCKET
+
+cd ../../application-plane/production/environments
+
+sed -e "s|{AWS_REGION}|$AWS_REGION|g" "./providers.tf.template" > providers.tf
+sed -i '' -e "s|{TERRAFORM_STATE_BUCKET}|$TERRAFORM_STATE_BUCKET|g" "./providers.tf"
+```
+
+Apply terraform script:
+
+```bash
+terraform init
+terraform apply --auto-approve
+```
+
+## Change Templates using Terraform output
+
+```bash
+cd ../../../clusters/production
+
 sed -e "s|{TENANT_CHART_HELM_REPO}|$(terraform output -raw ecr_helm_chart_url | sed 's|\(.*\)/.*|\1|')|g" "../../../gitops/infrastructure/base/sources/tenant-chart-helm.yaml.template" > ../../../gitops/infrastructure/base/sources/tenant-chart-helm.yaml
 
 sed -e "s|{KARPENTER_CONTROLLER_IRSA}|$(terraform output -raw karpenter_irsa)|g" "../../../gitops/infrastructure/production/02-karpenter.yaml.template" > ../../../gitops/infrastructure/production/02-karpenter.yaml
