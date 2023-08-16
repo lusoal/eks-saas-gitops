@@ -12,8 +12,8 @@ git_user_name="$4"
 # Local Test Variable
 TENANT_TF_PATH="/Users/lucasdu/Documents/AWS-MAC/Projetos/saas-gitops-eks/saas-gitops-eks/terraform/application-plane/production/environments"
 
-TERRAFORM_SCRIPT_TEMPLATE_SILOED="${TENANT_TF_PATH}/siloed-template.tpl"
-TERRAFORM_SCRIPT_TEMPLATE_HYBRID="${TENANT_TF_PATH}/hybrid-template.tpl"
+TERRAFORM_SCRIPT_TEMPLATE_SILOED="${TENANT_TF_PATH}/siloed-template.tf.template"
+TERRAFORM_SCRIPT_TEMPLATE_HYBRID="${TENANT_TF_PATH}/hybrid-template.tf.template"
 
 TERRAFORM_SCRIPT="${TENANT_TF_PATH}/${TENANT_ID}-${TENANT_MODEL}.tf"
 

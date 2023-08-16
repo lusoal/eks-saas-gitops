@@ -12,7 +12,7 @@ Sample pattern using GitOps with Flux to manage multiple tenants in a single clu
 - Fork this repository
 - finch
 
-## Install
+## Deploy EKS cluster and add-ons
 
 Change terraform template to use your GitHub fork:
 
@@ -38,6 +38,24 @@ terraform apply --auto-approve
 
 # create kubeconfig file
 aws eks update-kubeconfig --region $AWS_REGION --name eks-saas-gitops
+```
+
+## Create pool-1 application infrastructure
+
+```bash
+export TERRAFORM_STATE_BUCKET=<bucket-to-persist-state>
+
+cd ../../application-plane/production/environments
+
+sed -e "s|{AWS_REGION}|$AWS_REGION|g" "./providers.tf.template" > providers.tf
+sed -i '' -e "s|{TERRAFORM_STATE_BUCKET}|$TERRAFORM_STATE_BUCKET|g" "./providers.tf"
+```
+
+Apply terraform script:
+
+```bash
+terraform init
+terraform apply --auto-approve
 ```
 
 ## Change Templates using Terraform output
