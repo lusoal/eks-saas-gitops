@@ -172,3 +172,24 @@ sed -i '' -e "s|{GITHUB_USERNAME}|$GITHUB_USERNAME|g" "tenant-onboarding/workflo
 sed -i '' -e "s|{GIT_USER_EMAIL}|$GIT_USER_EMAIL|g" "tenant-onboarding/workflow-call-workflow-template.yaml"
 ```
 
+Now that you replace specific variables, let's create the tenant, first you will need to define your `TENANT_ID` and `TENANT MODEL` in `workflow-call-workflow-template.yaml` file:
+
+```yaml
+- name: TENANT_ID
+  value: "tenant-2" # ID of your tenant, use this patter eg. tenant-xx (tenant-10, tenant-11)
+- name: TENANT_MODEL
+  value: "siloed" # Valid values are: siloed, pooled, hybrid
+```
+
+In the example above we will create a tenant using the `siloed` model, valid values are `siloed`, `hybrid` and `pooled`. Let's apply the manifest.
+
+```bash
+kubectl create -f tenant-onboarding/workflow-call-workflow-template.yaml
+```
+
+Visualizing in Argo Workflows, let's open Argo Workflows and see our pipeline running:
+
+```bash
+ARGO_WORKFLOWS_URL=$(kubectl get svc -nargo-workflows | grep -i elb | awk '{print $4}'):2746
+echo ARGO_WORKFLOWS_URL
+```
