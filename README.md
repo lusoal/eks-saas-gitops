@@ -147,10 +147,28 @@ git push origin main
 
 # Create new Tenant using Argo-Workflows
 
-The first thing we need to do is create a secret to be able to clone and push our GitHub Repository.
+The first thing we need to do is create a secret to be able to clone and push our GitHub Repository (The public key needs to be already added with the right permissions in your repository).
 
 ```bash
 kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=PATH_TO_PRIVATE_KEY --from-literal=ssh-privatekey.mode=0600 -nargo-workflows
 ```
 
 > If you don't know how to generate a private key, you can find it [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+
+## Creating Workflow Temaplate
+
+In Argo Workflows we can create `Workflows Templates` and reuse it, let's create our workflow template who will be responsible to provision tenants in our environment:
+
+```bash
+kubectl apply -f tenant-onboarding/tenant-onboarding-workflow-template.yaml
+```
+
+Replacing variables in `workflow-call-workflow-template.yaml`
+
+```bash
+export GIT_USER_EMAIL=<your_github_email>
+
+sed -i '' -e "s|{GITHUB_USERNAME}|$GITHUB_USERNAME|g" "tenant-onboarding/workflow-call-workflow-template.yaml"
+sed -i '' -e "s|{GIT_USER_EMAIL}|$GIT_USER_EMAIL|g" "tenant-onboarding/workflow-call-workflow-template.yaml"
+```
+
