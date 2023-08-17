@@ -34,8 +34,8 @@ metadata:
   namespace: flux-system
 spec:
   releaseName: TENANT_ID-pool
-  targetNamespace: POOL_NAMESPACE
-  storageNamespace: POOL_NAMESPACE
+  targetNamespace: pool-1
+  storageNamespace: pool-1
   interval: 10m0s
   chart:
     spec:
