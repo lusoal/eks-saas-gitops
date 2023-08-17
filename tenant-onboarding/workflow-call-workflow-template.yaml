@@ -33,10 +33,10 @@ spec:
             templateRef:
               name: tenant-onboarding-template
               template: create-tenant-infrastructure
-        # - - name: create-tenant-helm-release
-        #     templateRef:
-        #       name: tenant-onboarding-template
-        #       template: create-tenant-helm-release
+        - - name: create-tenant-helm-release
+            templateRef:
+              name: tenant-onboarding-template
+              template: create-tenant-helm-release
   volumeClaimTemplates:                
   - metadata:
       name: workdir
