@@ -9,31 +9,33 @@ spec:
   arguments:
     parameters:
       - name: REPO_URL
-        value: "git@github.com:lusoal/eks-saas-gitops.git"
+        value: "git@github.com:{GITHUB_USERNAME}/eks-saas-gitops.git"
       - name: AWS_REGION
         value: "us-west-2"
       - name: TENANT_ID
-        value: "tenant-18"
+        value: "tenant-2" # ID of your tenant, use this patter eg. tenant-xx (tenant-10, tenant-11)
       - name: TENANT_MODEL
-        value: "siloed"
+        value: "siloed" # Valid values are: siloed, pooled, hybrid
       - name: GIT_USER_EMAIL
-        value: "lucasdu@amazon.com"
+        value: "{GIT_USER_EMAIL}"
       - name: GIT_USERNAME
-        value: "lusoal"
+        value: "{GITHUB_USERNAME}"
+      - name: GIT_BRANCH
+        value: "main" # Can change based on your configs
   templates:
     - name: tenant-provisioning
       steps:
         - - name: clone-repository
             templateRef:
-              name: tenant-onboarding-workflow-template
+              name: tenant-onboarding-template
               template: clone-repository
         - - name: create-tenant-infrastructure
             templateRef:
-              name: tenant-onboarding-workflow-template
+              name: tenant-onboarding-template
               template: create-tenant-infrastructure
         - - name: create-tenant-helm-release
             templateRef:
-              name: tenant-onboarding-workflow-template
+              name: tenant-onboarding-template
               template: create-tenant-helm-release
   volumeClaimTemplates:                
   - metadata:
@@ -46,7 +48,7 @@ spec:
   volumes:
   - name: ssh-key
     secret:
-      secretName: github-ssh-key # Secret need to be created to run this workflow
+      secretName: github-ssh-key # Secret created earlier
       items:
         - key: ssh-privatekey
           path: id_rsa
