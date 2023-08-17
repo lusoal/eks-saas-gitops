@@ -1,16 +1,12 @@
-#!/bin/bash
-
 # Set the desired values for AWS_REGION, TENANT_ID, TENANT_MODEL
 TENANT_ID="$1"
 TENANT_MODEL="$2"
 git_user_email="$3"
 git_user_name="$4"
+REPOSITORY_BRANCH="$5"
 
 # Define the filename of the Terraform script
-# TENANT_TF_PATH="/mnt/vol/eks-saas-gitops/terraform/application-plane/production/environments"
-
-# Local Test Variable
-TENANT_TF_PATH="/Users/lucasdu/Documents/AWS-MAC/Projetos/saas-gitops-eks/saas-gitops-eks/terraform/application-plane/production/environments"
+TENANT_TF_PATH="/mnt/vol/eks-saas-gitops/terraform/application-plane/production/environments"
 
 TERRAFORM_SCRIPT_TEMPLATE_SILOED="${TENANT_TF_PATH}/siloed-template.tf.template"
 TERRAFORM_SCRIPT_TEMPLATE_HYBRID="${TENANT_TF_PATH}/hybrid-template.tf.template"
@@ -49,4 +45,4 @@ git config --global user.name "${git_user_name}"
 git status
 git add .
 git commit -m "Adding new infra for tenant $TENANT_ID in model $TENANT_MODEL"
-git push origin main
+git push origin $REPOSITORY_BRANCH

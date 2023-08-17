@@ -144,3 +144,13 @@ git add .
 git commit -m 'Initial Setup'
 git push origin main
 ```
+
+# Create new Tenant using Argo-Workflows
+
+The first thing we need to do is create a secret to be able to clone and push our GitHub Repository.
+
+```bash
+kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=PATH_TO_PRIVATE_KEY --from-literal=ssh-privatekey.mode=0600 -nargo-workflows
+```
+
+> If you don't know how to generate a private key, you can find it [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)

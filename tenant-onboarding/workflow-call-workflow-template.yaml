@@ -13,28 +13,30 @@ spec:
       - name: AWS_REGION
         value: "us-west-2"
       - name: TENANT_ID
-        value: "tenant-18"
+        value: "tenant-10"
       - name: TENANT_MODEL
         value: "siloed"
       - name: GIT_USER_EMAIL
         value: "lucasdu@amazon.com"
       - name: GIT_USERNAME
         value: "lusoal"
+      - name: GIT_BRANCH
+        value: "lucas-branch"
   templates:
     - name: tenant-provisioning
       steps:
         - - name: clone-repository
             templateRef:
-              name: tenant-onboarding-workflow-template
+              name: tenant-onboarding-template
               template: clone-repository
         - - name: create-tenant-infrastructure
             templateRef:
-              name: tenant-onboarding-workflow-template
+              name: tenant-onboarding-template
               template: create-tenant-infrastructure
-        - - name: create-tenant-helm-release
-            templateRef:
-              name: tenant-onboarding-workflow-template
-              template: create-tenant-helm-release
+        # - - name: create-tenant-helm-release
+        #     templateRef:
+        #       name: tenant-onboarding-template
+        #       template: create-tenant-helm-release
   volumeClaimTemplates:                
   - metadata:
       name: workdir
