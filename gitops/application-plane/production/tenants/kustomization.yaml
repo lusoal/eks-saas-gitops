@@ -6,3 +6,5 @@ resources:
   - tenant-2-siloed.yaml
 
   - tenant-3-pooled.yaml
+
+  - tenant-4-hybrid.yaml
