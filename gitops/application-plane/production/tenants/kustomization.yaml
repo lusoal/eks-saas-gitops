@@ -4,3 +4,5 @@ resources:
   - tenant-1-silo.yaml
 
   - tenant-2-siloed.yaml
+
+  - tenant-3-pooled.yaml
