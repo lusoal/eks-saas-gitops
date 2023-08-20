@@ -94,9 +94,12 @@ module "eks" {
   eks_managed_node_groups = {
     baseline-infra = {
       instance_types = ["m5.large"]
-      min_size     = 3
-      max_size     = 5
-      desired_size = 3
+      min_size       = 3
+      max_size       = 5
+      desired_size   = 3
+      labels         = {
+        node-type = "applications"
+      }
     }
   }
 
