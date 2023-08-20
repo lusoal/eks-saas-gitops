@@ -43,6 +43,8 @@ metadata:
     self-managed-add-on: "true"
     add-on-version: "0.28.2"
 spec:
+  dependsOn:
+    - name: aws-load-balancer-controller
   releaseName: argo-workflows
   targetNamespace: argo-workflows
   storageNamespace: argo-workflows
