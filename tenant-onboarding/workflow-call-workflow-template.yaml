@@ -13,9 +13,9 @@ spec:
       - name: AWS_REGION
         value: "us-west-2"
       - name: TENANT_ID
-        value: "tenant-2" # ID of your tenant, use this patter eg. tenant-xx (tenant-10, tenant-11)
+        value: "tenant-4" # ID of your tenant, use this patter eg. tenant-xx (tenant-10, tenant-11)
       - name: TENANT_MODEL
-        value: "siloed" # Valid values are: siloed, pooled, hybrid
+        value: "hybrid" # Valid values are: siloed, pooled, hybrid
       - name: GIT_USER_EMAIL
         value: "tiago@reichert.eti.br"
       - name: GIT_USERNAME
