@@ -11,14 +11,11 @@ spec:
   chart:
     spec:
       chart: helm-tenant-chart
-      version: 0.0.1
+      version: 0.x.x
       sourceRef:
         kind: HelmRepository
         name: helm-tenant-chart
   values:
     tenantId: TENANT_ID
-    apps:
-      - name: producer
-      - name: consumer
     deployApps: false
     deployIngress: true

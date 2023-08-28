@@ -46,7 +46,7 @@ spec:
         env:
           - name: GIT_SSH_COMMAND
             value: "ssh -i /root/.ssh/id_rsa"
-  volumeClaimTemplates:                
+  volumeClaimTemplates:
   - metadata:
       name: workdir
     spec:
@@ -61,4 +61,3 @@ spec:
       items:
         - key: ssh-privatekey
           path: id_rsa
-  
