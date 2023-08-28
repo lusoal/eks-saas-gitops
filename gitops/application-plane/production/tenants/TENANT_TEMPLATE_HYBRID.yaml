@@ -36,7 +36,7 @@ spec:
   releaseName: TENANT_ID-pool
   targetNamespace: pool-1
   storageNamespace: pool-1
-  interval: 10m0s
+  interval: 1m0s
   chart:
     spec:
       chart: helm-tenant-chart
@@ -66,7 +66,7 @@ spec:
   releaseName: TENANT_ID-silo
   targetNamespace: TENANT_ID
   storageNamespace: TENANT_ID
-  interval: 10m0s
+  interval: 1m0s
   chart:
     spec:
       chart: helm-tenant-chart
