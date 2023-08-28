@@ -54,8 +54,5 @@ spec:
       - key: "applications"
         operator: "Exists"
         effect: "NoSchedule"
-    apps:
-      - name: producer
-      - name: consumer
     deployApps: true
     deployIngress: true

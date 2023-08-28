@@ -9,7 +9,7 @@ spec:
   templates:
     - name: clone-repository
       container:
-        image: "866700345736.dkr.ecr.us-west-2.amazonaws.com/argoworkflow-container"
+        image: "{ARGO_WORKFLOW_CONTAINER}"
         command: ["/bin/sh","-c"]
         args: ['cp /tmp/id_rsa /root/.ssh/ && chmod 600 /root/.ssh/id_rsa && ./01-tenant-clone-repo.sh {{workflow.parameters.REPO_URL}} {{workflow.parameters.GIT_BRANCH}} && cp -r eks-saas-gitops /mnt/vol'] # Create Tenant infra script
         volumeMounts:
@@ -22,7 +22,7 @@ spec:
             value: "ssh -i /root/.ssh/id_rsa"
     - name: create-tenant-infrastructure
       container:
-        image: "866700345736.dkr.ecr.us-west-2.amazonaws.com/argoworkflow-container"
+        image: "{ARGO_WORKFLOW_CONTAINER}"
         command: ["/bin/sh","-c"]
         args: ['cp /mnt/ssh/id_rsa /root/.ssh/ && chmod 600 /root/.ssh/id_rsa && ./02-tenant-onboarding-infra.sh {{workflow.parameters.TENANT_ID}} {{workflow.parameters.TENANT_MODEL}} {{workflow.parameters.GIT_USER_EMAIL}} {{workflow.parameters.GIT_USERNAME}} {{workflow.parameters.GIT_BRANCH}}'] # Create Tenant infra script
         volumeMounts:
@@ -35,7 +35,7 @@ spec:
             value: "ssh -i /root/.ssh/id_rsa"
     - name: create-tenant-helm-release
       container:
-        image: "866700345736.dkr.ecr.us-west-2.amazonaws.com/argoworkflow-container"
+        image: "{ARGO_WORKFLOW_CONTAINER}"
         command: ["/bin/sh","-c"]
         args: ['cp /tmp/id_rsa /root/.ssh/ && chmod 600 /root/.ssh/id_rsa && ./03-tenant-onboarding.sh {{workflow.parameters.TENANT_ID}} {{workflow.parameters.TENANT_MODEL}} {{workflow.parameters.GIT_USER_EMAIL}} {{workflow.parameters.GIT_USERNAME}} {{workflow.parameters.GIT_BRANCH}}'] # Create Tenant infra script
         volumeMounts:
@@ -46,7 +46,7 @@ spec:
         env:
           - name: GIT_SSH_COMMAND
             value: "ssh -i /root/.ssh/id_rsa"
-  volumeClaimTemplates:                
+  volumeClaimTemplates:
   - metadata:
       name: workdir
     spec:
@@ -61,4 +61,3 @@ spec:
       items:
         - key: ssh-privatekey
           path: id_rsa
-  
