@@ -12,7 +12,7 @@ spec:
   releaseName: kubecost
   targetNamespace: kubecost
   storageNamespace: kubecost
-  interval: 10m0s
+  interval: 1m0s
   chart:
     spec:
       chart: cost-analyzer
@@ -124,12 +124,13 @@ spec:
       #      - cost-analyzer.local
 
     service:
-      type: ClusterIP
+      type: LoadBalancer
       port: 9090
       targetPort: 9090
       # nodePort:
       labels: {}
-      annotations: {}
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
 
     prometheus:
       server:
