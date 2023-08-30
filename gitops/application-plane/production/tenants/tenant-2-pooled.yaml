@@ -1,0 +1,21 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: tenant-2
+  namespace: flux-system
+spec:
+  releaseName: tenant-2
+  targetNamespace: pool-1
+  storageNamespace: pool-1
+  interval: 1m0s
+  chart:
+    spec:
+      chart: helm-tenant-chart
+      version: 0.x.x
+      sourceRef:
+        kind: HelmRepository
+        name: helm-tenant-chart
+  values:
+    tenantId: tenant-2
+    deployApps: false
+    deployIngress: true
