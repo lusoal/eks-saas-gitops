@@ -348,7 +348,7 @@ Resources:
             - echo '====== Provision Terraform ======'
             - git clone -b feat/cloudformation https://github.com/lusoal/eks-saas-gitops.git /home/ec2-user/environment/eks-saas-gitops
             - cp /home/ec2-user/environment/eks-saas-gitops/install.sh /home/ec2-user/environment/install.sh && chmod +x /home/ec2-user/environment/install.sh
-            - bash /home/ec2-user/environment/install.sh
+            # - bash /home/ec2-user/environment/install.sh
             # - cd /home/ec2-user/environment/eks-blueprint && terraform init && terraform apply --auto-approve
             # - cd /home/ec2-user/environment/eks-blueprint && terraform apply --auto-approve
             # - cp /home/ec2-user/environment/eks-blueprint/terraform.tfstate /home/ec2-user/environment/
