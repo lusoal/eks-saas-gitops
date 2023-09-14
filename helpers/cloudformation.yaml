@@ -346,8 +346,7 @@ Resources:
             - export AWS_REGION="$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -d'"' -f4)" && echo "export AWS_REGION=${AWS_REGION}" >> /home/ec2-user/.bashrc
             - echo 'aws cloud9 update-environment  --environment-id $C9_PID --managed-credentials-action DISABLE' >> /home/ec2-user/.bashrc
             - echo '====== Provision Terraform ======'
-            - mkdir -p /home/ec2-user/environment/eks-blueprint
-            - git clone -b feat/cloudformation https://github.com/lusoal/eks-saas-gitops.git
+            - git clone -b feat/cloudformation https://github.com/lusoal/eks-saas-gitops.git /home/ec2-user/environment/eks-saas-gitops
             - sudo chown -R ec2-user:ec2-user /home/ec2-user/environment/eks-saas-gitops
             # - cd /home/ec2-user/environment/eks-blueprint && terraform init && terraform apply --auto-approve
             # - cd /home/ec2-user/environment/eks-blueprint && terraform apply --auto-approve
