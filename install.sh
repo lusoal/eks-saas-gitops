@@ -89,13 +89,27 @@ cd /home/ec2-user/environment/eks-saas-gitops-aws
 aws ecr get-login-password \
      --region $AWS_REGION | helm registry login \
      --username AWS \
-     --password-stdin $ECR_HELM_CHART_URL     
+     --password-stdin $ECR_HELM_CHART_URL
 helm package tenant-chart
 helm push helm-tenant-chart-0.0.1.tgz oci://$(echo $ECR_HELM_CHART_URL | sed 's|\(.*\)/.*|\1|')
 
 aws ecr get-login-password \
      --region $AWS_REGION | docker login \
      --username AWS \
-     --password-stdin $ECR_PRODUCER_CONTAINER    
+     --password-stdin $ECR_PRODUCER_CONTAINER
 docker build -t $ECR_PRODUCER_CONTAINER:0.1 tenants-microsservices/producer
 docker push $ECR_PRODUCER_CONTAINER:0.1
+
+aws ecr get-login-password \
+     --region $AWS_REGION | docker login \
+     --username AWS \
+     --password-stdin $ECR_CONSUMER_CONTAINER
+docker build -t $ECR_CONSUMER_CONTAINER:0.1 tenants-microsservices/consumer
+docker push $ECR_CONSUMER_CONTAINER:0.1
+
+aws ecr get-login-password \
+     --region $AWS_REGION | docker login \
+     --username AWS \
+     --password-stdin $ECR_ARGOWORKFLOW_CONTAINER
+docker build -t $ECR_ARGOWORKFLOW_CONTAINER tenant-onboarding
+docker push $ECR_ARGOWORKFLOW_CONTAINER
