@@ -1,4 +1,6 @@
 # Apply terarform without flux
+cd /home/ec2-user/environment/eks-saas-gitops/terraform/clusters/production
+
 terraform init
 
 terraform apply -var "aws_region=${AWS_REGION}" \
@@ -26,8 +28,74 @@ terraform apply -var "aws_region=${AWS_REGION}" \
 -target=aws_iam_user_policy_attachment.codecommit-user-attach \
 -target=module.ebs_csi_irsa_role --auto-approve
 
+# Exporting terraform outputs to bashrc
+outputs=("argo_workflows_bucket_name" 
+         "argo_workflows_irsa" 
+         "aws_codecommit_clone_url_http" 
+         "aws_codecommit_clone_url_ssh" 
+         "aws_vpc_id" 
+         "cluster_endpoint" 
+         "cluster_iam_role_name" 
+         "cluster_primary_security_group_id" 
+         "ecr_argoworkflow_container" 
+         "ecr_consumer_container" 
+         "ecr_helm_chart_url" 
+         "ecr_producer_container" 
+         "karpenter_instance_profile" 
+         "karpenter_irsa" 
+         "lb_controller_irsa")
+
+for output in "${outputs[@]}"; do
+    value=$(terraform output -raw $output)
+    echo "export ${output^^}=$value" >> /home/ec2-user/.bashrc
+done
+
+source /home/ec2-user/.bashrc
+
 # Configuring Git user for Cloud9
 git config --global user.name "Workshop User"
 git config --global user.email workshop.user@example.com
 git config --global credential.helper '!aws codecommit credential-helper $@'
 git config --global credential.UseHttpPath true
+
+# Cloning code commit repository and copying files to the git repository
+cd /home/ec2-user/environment
+git clone $AWS_CODECOMMIT_CLONE_URL_HTTP
+cp -r /home/ec2-user/environment/eks-saas-gitops/* /home/ec2-user/environment/eks-saas-gitops-aws
+rm -rf /home/ec2-user/environment/eks-saas-gitops
+
+# Changing template files to use the new values
+export GITOPS_FOLDER="/home/ec2-user/environment/eks-saas-gitops-aws/gitops"
+export ONBOARDING_FOLER="/home/ec2-user/environment/eks-saas-gitops-aws/tenant-onboarding"
+export TENANT_CHART_FOLER="/home/ec2-user/environment/eks-saas-gitops-aws/tenant-chart"
+
+sed -e "s|{TENANT_CHART_HELM_REPO}|$(echo ${ECR_HELM_CHART_URL} | sed 's|\(.*\)/.*|\1|')|g" "${GITOPS_FOLDER}/infrastructure/base/sources/tenant-chart-helm.yaml.template" > ${GITOPS_FOLDER}/infrastructure/base/sources/tenant-chart-helm.yaml
+sed -e "s|{KARPENTER_CONTROLLER_IRSA}|${KARPENTER_IRSA}|g" "${GITOPS_FOLDER}/infrastructure/production/02-karpenter.yaml.template" > ${GITOPS_FOLDER}/infrastructure/production/02-karpenter.yaml
+sed -i "s|{EKS_CLUSTER_ENDPOINT}|${CLUSTER_ENDPOINT}|g" "${GITOPS_FOLDER}/infrastructure/production/02-karpenter.yaml"
+sed -i "s|{KARPENTER_INSTANCE_PROFILE}|${KARPENTER_INSTANCE_PROFILE}|g" "${GITOPS_FOLDER}/infrastructure/production/02-karpenter.yaml"
+sed -e "s|{ARGO_WORKFLOW_IRSA}|${ARGO_WORKFLOWS_IRSA}|g" "${GITOPS_FOLDER}/infrastructure/production/03-argo-workflows.yaml.template" > "${GITOPS_FOLDER}/infrastructure/production/03-argo-workflows.yaml"
+sed -i "s|{ARGO_WORKFLOW_BUCKET}|${ARGO_WORKFLOWS_BUCKET_NAME}|g" "${GITOPS_FOLDER}/infrastructure/production/03-argo-workflows.yaml"
+sed -e "s|{LB_CONTROLLER_IRSA}|${LB_CONTROLLER_IRSA}|g" "${GITOPS_FOLDER}/infrastructure/production/04-lb-controller.yaml.template" > ${GITOPS_FOLDER}/infrastructure/production/04-lb-controller.yaml
+
+sed -i "s|{ARGO_WORKFLOW_CONTAINER}|${ECR_ARGOWORKFLOW_CONTAINER}|g" "${ONBOARDING_FOLER}/tenant-onboarding-workflow-template.yaml"
+
+sed -e "s|{CONSUMER_ECR}|${ECR_CONSUMER_CONTAINER}|g" "${TENANT_CHART_FOLER}/values.yaml.template" > ${TENANT_CHART_FOLER}/values.yaml
+sed -i "s|{PRODUCER_ECR}|${ECR_PRODUCER_CONTAINER}|g" "${TENANT_CHART_FOLER}/values.yaml"
+
+# Building containers and push to ECR
+cd /home/ec2-user/environment/eks-saas-gitops-aws
+
+# Build & Push Tenant Helm Chart
+aws ecr get-login-password \
+     --region $AWS_REGION | helm registry login \
+     --username AWS \
+     --password-stdin $ECR_HELM_CHART_URL     
+helm package tenant-chart
+helm push helm-tenant-chart-0.0.1.tgz oci://$(echo $ECR_HELM_CHART_URL | sed 's|\(.*\)/.*|\1|')
+
+aws ecr get-login-password \
+     --region $AWS_REGION | docker login \
+     --username AWS \
+     --password-stdin $ECR_PRODUCER_CONTAINER    
+docker build -t $ECR_PRODUCER_CONTAINER:0.1 tenants-microsservices/producer
+docker push $ECR_PRODUCER_CONTAINER:0.1
