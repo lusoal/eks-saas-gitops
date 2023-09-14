@@ -133,3 +133,46 @@ git commit -m 'Initial Setup'
 git push origin main
 
 chown -R ec2-user:ec2-user /home/ec2-user/environment/eks-saas-gitops-aws
+
+# Create key and adding into codecommit-user
+cd /home/ec2-user/environment/
+ssh-keygen -t rsa -b 4096 -f flux -N ""
+
+aws iam upload-ssh-public-key --user-name codecommit-user --ssh-public-key-body file:///home/ec2-user/environment/flux.pub
+
+ssh-keyscan "git-codecommit.${AWS_REGION}.amazonaws.com" > /home/ec2-user/environment/temp_known_hosts
+
+export TERRAFORM_CLUSTER_FOLDER="/home/ec2-user/environment/eks-saas-gitops-aws/terraform/clusters/production"
+
+# Clear the YAML file if it exists
+> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
+
+# Append the beginning of the file
+echo "# Define here your GitHub credentials" >> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
+echo "secret:" >> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
+echo "  create: true" >> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
+echo "  data:" >> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
+
+# Append the keys
+echo "    identity: |" >> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
+cat /home/ec2-user/environment/flux | sed 's/^/      /' >> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
+
+echo "    identity.pub: |" >> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
+cat /home/ec2-user/environment/flux.pub | sed 's/^/      /' >> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
+
+# Append known hosts
+echo "    known_hosts: |" >> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
+cat /home/ec2-user/environment/temp_known_hosts | sed 's/^/      /' >> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
+
+cd $TERRAFORM_CLUSTER_FOLDER
+ssh_public_key_id=$(aws iam list-ssh-public-keys --user-name codecommit-user --query "SSHPublicKeys[0].SSHPublicKeyId" --output text)
+modified_clone_url="ssh://${ssh_public_key_id}@$(echo ${AWS_CODECOMMIT_CLONE_URL_SSH} | cut -d'/' -f3-)"
+
+export CLONE_URL_CODECOMMIT_USER=${modified_clone_url} && echo "export CLONE_URL_CODECOMMIT_USER=${CLONE_URL_CODECOMMIT_USER}" >> /home/ec2-user/.bashrc
+
+terraform init && terraform apply -var "git_url=${CLONE_URL_CODECOMMIT_USER}" -var "aws_region=${AWS_REGION}" -auto-approve
+
+cd /home/ec2-user/environment/eks-saas-gitops-aws
+git add .
+git commit -m 'Flux system sync including private key'
+git push origin main

@@ -2,6 +2,6 @@
 secret:
   create: true
   data:
-    identity: ""
-    identity.pub: ""
-    known_hosts: ""
+    identity: {FLUX_PRIVATE_KEY}
+    identity.pub: {FLUX_PUBLIC_KEY}
+    known_hosts: {KNOWN_HOSTS}
