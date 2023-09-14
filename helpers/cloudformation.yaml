@@ -348,7 +348,29 @@ Resources:
             - echo '====== Provision Terraform ======'
             - git clone -b feat/cloudformation https://github.com/lusoal/eks-saas-gitops.git /home/ec2-user/environment/eks-saas-gitops
             - sudo chown -R ec2-user:ec2-user /home/ec2-user/environment/eks-saas-gitops
-            - cd /home/ec2-user/environment/eks-saas-gitops/terraform/clusters/production && terraform init
+            - |
+                cd /home/ec2-user/environment/eks-saas-gitops/terraform/clusters/production && terraform init && \
+                terraform apply -var "aws_region=${AWS_REGION}" \
+                -target=module.vpc \
+                -target=module.eks \
+                -target=aws_iam_role.karpenter_node_role \
+                -target=aws_iam_policy_attachment.container_registry_policy \
+                -target=aws_iam_policy_attachment.amazon_eks_worker_node_policy \
+                -target=aws_iam_policy_attachment.amazon_eks_cni_policy \
+                -target=aws_iam_policy_attachment.amazon_eks_ssm_policy \
+                -target=aws_iam_instance_profile.karpenter_instance_profile \
+                -target=module.karpenter_irsa_role \
+                -target=aws_iam_policy.karpenter-policy \
+                -target=aws_iam_policy_attachment.karpenter_policy_attach \
+                -target=module.argo_workflows_eks_role \
+                -target=random_uuid.uuid \
+                -target=aws_s3_bucket.argo-artifacts \
+                -target=module.lb-controller-irsa \
+                -target=aws_ecr_repository.tenant_helm_chart \
+                -target=aws_ecr_repository.argoworkflow_container \
+                -target=aws_ecr_repository.consumer_container \
+                -target=aws_ecr_repository.producer_container \
+                -target=module.ebs_csi_irsa_role --auto-approve
             # - cd /home/ec2-user/environment/eks-blueprint && terraform init && terraform apply --auto-approve
             # - cd /home/ec2-user/environment/eks-blueprint && terraform apply --auto-approve
             # - cp /home/ec2-user/environment/eks-blueprint/terraform.tfstate /home/ec2-user/environment/

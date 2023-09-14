@@ -85,3 +85,15 @@ output "ecr_producer_container" {
 output "tenant_terraform_state_bucket_name" {
   value = aws_s3_bucket.tenant-terraform-state-bucket.id
 }
+
+#####################
+# Code Commit Outputs
+#####################
+
+output "aws_codecommit_clone_url_http" {
+  value = module.codecommit-flux.aws_codecommit_clone_url_http
+}
+
+output "aws_codecommit_clone_url_ssh" {
+  value = module.codecommit-flux.aws_codecommit_clone_url_ssh
+}
