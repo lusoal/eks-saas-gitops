@@ -1,0 +1,7 @@
+# Define here your GitHub credentials
+secret:
+  create: true
+  data:
+    identity: ""
+    identity.pub: ""
+    known_hosts: ""

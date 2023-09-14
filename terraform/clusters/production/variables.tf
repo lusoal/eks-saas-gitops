@@ -2,9 +2,7 @@ variable "name" {
   default = "eks-saas-gitops"
 }
 
-variable "aws_region" {
-  default = "{AWS_REGION}"
-} 
+variable "aws_region" {}
 
 variable "vpc_cidr" {
   default = "10.35.0.0/16"
@@ -19,7 +17,7 @@ variable "git_branch" {
 }
 
 variable "git_url" {
-  default = "https://github.com/{GITHUB_USERNAME}/eks-saas-gitops"
+  default = ""
 }
 
 variable "kustomization_path" {

@@ -61,8 +61,8 @@ module "eks" {
 
   cluster_addons = {
     aws-ebs-csi-driver = {
-      service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn 
-      most_recent = true
+      service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
+      most_recent              = true
     }
     coredns = {
       most_recent = true
@@ -71,7 +71,7 @@ module "eks" {
       most_recent = true
     }
     vpc-cni = {
-      most_recent    = true
+      most_recent = true
     }
   }
 
@@ -97,7 +97,7 @@ module "eks" {
       min_size       = 3
       max_size       = 5
       desired_size   = 3
-      labels         = {
+      labels = {
         node-type = "applications"
       }
     }
@@ -115,14 +115,14 @@ module "eks" {
 # Flux
 ################################################################################
 module "flux_v2" {
-  source = "../../modules/flux_cd"
-  cluster_endpoint = module.eks.cluster_endpoint
-  ca = module.eks.cluster_certificate_authority_data
-  token = data.aws_eks_cluster_auth.this.token
-  git_branch = var.git_branch
-  git_url = var.git_url
+  source             = "../../modules/flux_cd"
+  cluster_endpoint   = module.eks.cluster_endpoint
+  ca                 = module.eks.cluster_certificate_authority_data
+  token              = data.aws_eks_cluster_auth.this.token
+  git_branch         = var.git_branch
+  git_url            = var.git_url
   kustomization_path = var.kustomization_path
-  values_path = var.values_path
+  values_path        = var.values_path
 }
 
 
