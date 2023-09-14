@@ -54,7 +54,7 @@ Resources:
   C9Role:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: eks-upgrades-admin
+      RoleName: eks-saas-gitops-admin
       Tags:
         - Key: Environment
           Value: !Sub ${EnvironmentNameC9}
@@ -342,7 +342,6 @@ Resources:
             - yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
             - yum -y install terraform
             - echo '=== Exporting ENV Vars ==='
-            - export CLUSTER_NAME=eks-upgrades-workshop && echo 'export CLUSTER_NAME=eks-upgrades-workshop' >> /home/ec2-user/.bashrc
             - export AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)" && echo "export AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID}" >> /home/ec2-user/.bashrc
             - export AWS_REGION="$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -d'"' -f4)" && echo "export AWS_REGION=${AWS_REGION}" >> /home/ec2-user/.bashrc
             - echo 'aws cloud9 update-environment  --environment-id $C9_PID --managed-credentials-action DISABLE' >> /home/ec2-user/.bashrc
@@ -392,7 +391,7 @@ Resources:
       ImageId: amazonlinux-2-x86_64
       InstanceType:
         Ref: C9InstanceType
-      Name: eks-upgrades-workshop
+      Name: eks-saas-gitops
       OwnerArn: !If [Create3rdPartyResources, !Ref OwnerArn, !If [CreateEventEngineResources, !Join ['',['arn:aws:iam::',!Ref 'AWS::AccountId',':assumed-role/WSParticipantRole/Participant']],!Ref "AWS::NoValue"]]
       Tags: 
         - Key: SSMBootstrap
