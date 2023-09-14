@@ -91,9 +91,9 @@ output "tenant_terraform_state_bucket_name" {
 #####################
 
 output "aws_codecommit_clone_url_http" {
-  value = module.codecommit-flux.aws_codecommit_clone_url_http
+  value = module.codecommit-flux.clone_url_http
 }
 
 output "aws_codecommit_clone_url_ssh" {
-  value = module.codecommit-flux.aws_codecommit_clone_url_ssh
+  value = module.codecommit-flux.clone_url_ssh
 }
