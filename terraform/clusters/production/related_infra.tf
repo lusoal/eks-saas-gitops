@@ -259,7 +259,7 @@ module "codecommit-flux" {
   version         = "0.2.1"
   default_branch  = "main"
   description     = "Flux GitOps repository"
-  repository_name = "eks-saas-gitops"
+  repository_name = "eks-saas-gitops-aws"
 }
 
 resource "aws_iam_user" "codecommit-user" {
