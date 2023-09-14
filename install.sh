@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Apply terarform without flux
 cd /home/ec2-user/environment/eks-saas-gitops/terraform/clusters/production
 
@@ -26,7 +28,8 @@ terraform apply -var "aws_region=${AWS_REGION}" \
 -target=module.codecommit-flux \
 -target=aws_iam_user.codecommit-user \
 -target=aws_iam_user_policy_attachment.codecommit-user-attach \
--target=module.ebs_csi_irsa_role --auto-approve
+-target=module.ebs_csi_irsa_role \
+-target=aws_s3_bucket.tenant-terraform-state-bucket --auto-approve
 
 # Exporting terraform outputs to bashrc
 outputs=("argo_workflows_bucket_name" 
@@ -43,7 +46,8 @@ outputs=("argo_workflows_bucket_name"
          "ecr_producer_container" 
          "karpenter_instance_profile" 
          "karpenter_irsa" 
-         "lb_controller_irsa")
+         "lb_controller_irsa"
+         "tenant_terraform_state_bucket_name")
 
 for output in "${outputs[@]}"; do
     value=$(terraform output -raw $output)
@@ -62,7 +66,16 @@ git config --global credential.UseHttpPath true
 cd /home/ec2-user/environment
 git clone $AWS_CODECOMMIT_CLONE_URL_HTTP
 cp -r /home/ec2-user/environment/eks-saas-gitops/* /home/ec2-user/environment/eks-saas-gitops-aws
+cp /home/ec2-user/environment/eks-saas-gitops/.gitignore /home/ec2-user/environment/eks-saas-gitops-aws/.gitignore
 rm -rf /home/ec2-user/environment/eks-saas-gitops
+
+# Creating pool-1 application infra
+export APPLICATION_PLANE_INFRA_FOLDER="/home/ec2-user/environment/eks-saas-gitops-aws/terraform/application-plane/production/environments"
+
+sed -e "s|{AWS_REGION}|${AWS_REGION}|g" "${APPLICATION_PLANE_INFRA_FOLDER}/providers.tf.template" > ${APPLICATION_PLANE_INFRA_FOLDER}/providers.tf
+sed -i "s|{TERRAFORM_STATE_BUCKET}|${TENANT_TERRAFORM_STATE_BUCKET_NAME}|g" "${APPLICATION_PLANE_INFRA_FOLDER}/providers.tf"
+
+cd $APPLICATION_PLANE_INFRA_FOLDER && terraform init && terraform apply -auto-approve
 
 # Changing template files to use the new values
 export GITOPS_FOLDER="/home/ec2-user/environment/eks-saas-gitops-aws/gitops"
@@ -113,3 +126,10 @@ aws ecr get-login-password \
      --password-stdin $ECR_ARGOWORKFLOW_CONTAINER
 docker build -t $ECR_ARGOWORKFLOW_CONTAINER tenant-onboarding
 docker push $ECR_ARGOWORKFLOW_CONTAINER
+
+git checkout -b main
+git add .
+git commit -m 'Initial Setup'
+git push origin main
+
+chown -R ec2-user:ec2-user /home/ec2-user/environment/eks-saas-gitops-aws
