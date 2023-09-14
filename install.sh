@@ -176,3 +176,5 @@ cd /home/ec2-user/environment/eks-saas-gitops-aws
 git add .
 git commit -m 'Flux system sync including private key'
 git push origin main
+
+chown -R ec2-user:ec2-user /home/ec2-user/environment/
