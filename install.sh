@@ -124,7 +124,7 @@ aws ecr get-login-password \
      --region $AWS_REGION | docker login \
      --username AWS \
      --password-stdin $ECR_ARGOWORKFLOW_CONTAINER
-docker build -t $ECR_ARGOWORKFLOW_CONTAINER tenant-onboarding
+docker build --build-arg aws_region=${AWS_REGION} -t $ECR_ARGOWORKFLOW_CONTAINER tenant-onboarding
 docker push $ECR_ARGOWORKFLOW_CONTAINER
 
 git checkout -b main
@@ -178,3 +178,13 @@ git commit -m 'Flux system sync including private key'
 git push origin main
 
 chown -R ec2-user:ec2-user /home/ec2-user/environment/
+
+# Defining EKS context
+aws eks --region $AWS_REGION update-kubeconfig --name eks-saas-gitops
+
+# Creating secret for Argo Workflows
+cp /home/ec2-user/environment/flux /home/ec2-user/environment/id_rsa
+kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=/home/ec2-user/environment/id_rsa --from-literal=ssh-privatekey.mode=0600 -nargo-workflows
+
+# Giving access to EC2 user
+mkdir -p /home/ec2-user/.kube && cp /root/.kube/config /home/ec2-user/.kube/ && chown -R ec2-user:ec2-user /home/ec2-user/.kube/config

@@ -1,6 +1,9 @@
 # Use a lightweight base image
 FROM alpine:latest
 
+ARG aws_region
+ENV AWS_REGION=$aws_region
+
 # Install necessary dependencies
 RUN apk update && \
     apk add --no-cache \
@@ -19,5 +22,5 @@ RUN wget --quiet https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/t
 
 COPY . /
 # Display installed versions
-RUN terraform version && git version && mkdir -p /root/.ssh/ && ssh-keyscan github.com >> /root/.ssh/known_hosts
+RUN terraform version && git version && mkdir -p /root/.ssh/ && ssh-keyscan "git-codecommit.${AWS_REGION}.amazonaws.com" >> /root/.ssh/known_hosts
 
