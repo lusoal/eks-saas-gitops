@@ -348,6 +348,7 @@ Resources:
             - echo '====== Provision Terraform ======'
             - git clone -b feat/cloudformation https://github.com/lusoal/eks-saas-gitops.git /home/ec2-user/environment/eks-saas-gitops
             - sudo chown -R ec2-user:ec2-user /home/ec2-user/environment/eks-saas-gitops
+            - cd /home/ec2-user/environment/eks-saas-gitops/terraform/clusters/production && terraform init
             # - cd /home/ec2-user/environment/eks-blueprint && terraform init && terraform apply --auto-approve
             # - cd /home/ec2-user/environment/eks-blueprint && terraform apply --auto-approve
             # - cp /home/ec2-user/environment/eks-blueprint/terraform.tfstate /home/ec2-user/environment/

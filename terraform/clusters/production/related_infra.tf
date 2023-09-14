@@ -255,19 +255,18 @@ resource "aws_s3_bucket" "tenant-terraform-state-bucket" {
 # CODE COMMIT needs for flux
 ################################################################################
 module "codecommit-flux" {
-  source                 = "aws-ia/codecommit/aws"
-  version                = "0.0.3"
-  default_branch         = "main"
-  region                 = var.aws_region
-  repository_description = "Flux GitOps repository"
-  repository_name        = "eks-saas-gitops"
+  source          = "lgallard/codecommit/aws"
+  version         = "0.2.1"
+  default_branch  = "main"
+  description     = "Flux GitOps repository"
+  repository_name = "eks-saas-gitops"
 }
 
 resource "aws_iam_user" "codecommit-user" {
   name = "codecommit-user"
 }
 
-resource "aws_iam_user_policy_attachment" "test-attach" {
+resource "aws_iam_user_policy_attachment" "codecommit-user-attach" {
   user       = aws_iam_user.codecommit-user.name
   policy_arn = "arn:aws:iam::aws:policy/AWSCodeCommitPowerUser"
 }
