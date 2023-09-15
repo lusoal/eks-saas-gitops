@@ -247,6 +247,12 @@ echo "Configuring kubectl access for ec2-user"
 # Giving access to EC2 user
 mkdir -p /home/ec2-user/.kube && cp /root/.kube/config /home/ec2-user/.kube/ && chown -R ec2-user:ec2-user /home/ec2-user/.kube/config
 
-echo "Changing permissions for ec2-user"
+echo "Verifying if any installation needs to be reconciled"
+helm uninstall kubecost -nkubecost
+flux reconcile helmrelease kubecost -nflux-system
 
+helm uninstall karpenter -karpenter
+flux reconcile helmrelease karpenter -nflux-system
+
+echo "Changing permissions for ec2-user"
 chown -R ec2-user:ec2-user /home/ec2-user/environment/
