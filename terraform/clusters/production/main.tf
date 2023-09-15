@@ -7,7 +7,6 @@ locals {
 
   tags = {
     Blueprint  = var.name
-    GithubRepo = "github.com/aws-ia/terraform-aws-eks-blueprints"
   }
 }
 
