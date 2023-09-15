@@ -1,35 +1,59 @@
 #!/bin/bash
 
-# Apply terarform without flux
+# APPLY TERRAFORM NO FLUX
 cd /home/ec2-user/environment/eks-saas-gitops/terraform/clusters/production
 
 terraform init
 
-terraform apply -var "aws_region=${AWS_REGION}" \
--target=module.vpc \
--target=module.eks \
--target=aws_iam_role.karpenter_node_role \
--target=aws_iam_policy_attachment.container_registry_policy \
--target=aws_iam_policy_attachment.amazon_eks_worker_node_policy \
--target=aws_iam_policy_attachment.amazon_eks_cni_policy \
--target=aws_iam_policy_attachment.amazon_eks_ssm_policy \
--target=aws_iam_instance_profile.karpenter_instance_profile \
--target=module.karpenter_irsa_role \
--target=aws_iam_policy.karpenter-policy \
--target=aws_iam_policy_attachment.karpenter_policy_attach \
--target=module.argo_workflows_eks_role \
--target=random_uuid.uuid \
--target=aws_s3_bucket.argo-artifacts \
--target=module.lb-controller-irsa \
--target=aws_ecr_repository.tenant_helm_chart \
--target=aws_ecr_repository.argoworkflow_container \
--target=aws_ecr_repository.consumer_container \
--target=aws_ecr_repository.producer_container \
--target=module.codecommit-flux \
--target=aws_iam_user.codecommit-user \
--target=aws_iam_user_policy_attachment.codecommit-user-attach \
--target=module.ebs_csi_irsa_role \
--target=aws_s3_bucket.tenant-terraform-state-bucket --auto-approve
+MAX_RETRIES=3
+COUNT=0
+SUCCESS=false
+
+echo "Applying Terraform ..."
+
+while [ $COUNT -lt $MAX_RETRIES ]; do
+     terraform apply -var "aws_region=${AWS_REGION}" \
+     -target=module.vpc \
+     -target=module.eks \
+     -target=aws_iam_role.karpenter_node_role \
+     -target=aws_iam_policy_attachment.container_registry_policy \
+     -target=aws_iam_policy_attachment.amazon_eks_worker_node_policy \
+     -target=aws_iam_policy_attachment.amazon_eks_cni_policy \
+     -target=aws_iam_policy_attachment.amazon_eks_ssm_policy \
+     -target=aws_iam_instance_profile.karpenter_instance_profile \
+     -target=module.karpenter_irsa_role \
+     -target=aws_iam_policy.karpenter-policy \
+     -target=aws_iam_policy_attachment.karpenter_policy_attach \
+     -target=module.argo_workflows_eks_role \
+     -target=random_uuid.uuid \
+     -target=aws_s3_bucket.argo-artifacts \
+     -target=module.lb-controller-irsa \
+     -target=aws_ecr_repository.tenant_helm_chart \
+     -target=aws_ecr_repository.argoworkflow_container \
+     -target=aws_ecr_repository.consumer_container \
+     -target=aws_ecr_repository.producer_container \
+     -target=module.codecommit-flux \
+     -target=aws_iam_user.codecommit-user \
+     -target=aws_iam_user_policy_attachment.codecommit-user-attach \
+     -target=module.ebs_csi_irsa_role \
+     -target=aws_s3_bucket.tenant-terraform-state-bucket --auto-approve
+
+     if [ $? -eq 0 ]; then
+          echo "Terraform apply succeeded."
+          SUCCESS=true
+          break
+     else
+          echo "Terraform apply failed. Retrying..."
+          COUNT=$((COUNT+1))
+     fi
+done
+
+if [ "$SUCCESS" = false ]; then
+     echo "Max retries reached for terraform apply."
+fi
+
+# Continue with the rest of your script
+echo "Exporting terraform output to environment variables"
 
 # Exporting terraform outputs to bashrc
 outputs=("argo_workflows_bucket_name" 
@@ -56,11 +80,15 @@ done
 
 source /home/ec2-user/.bashrc
 
+echo "Configuring Cloud9 User to CodeCommit"
+
 # Configuring Git user for Cloud9
 git config --global user.name "Workshop User"
 git config --global user.email workshop.user@example.com
 git config --global credential.helper '!aws codecommit credential-helper $@'
 git config --global credential.UseHttpPath true
+
+echo "Cloning CodeCommit repository and copying files"
 
 # Cloning code commit repository and copying files to the git repository
 cd /home/ec2-user/environment
@@ -69,6 +97,8 @@ cp -r /home/ec2-user/environment/eks-saas-gitops/* /home/ec2-user/environment/ek
 cp /home/ec2-user/environment/eks-saas-gitops/.gitignore /home/ec2-user/environment/eks-saas-gitops-aws/.gitignore
 rm -rf /home/ec2-user/environment/eks-saas-gitops
 
+echo "Create pool-1 application infra"
+
 # Creating pool-1 application infra
 export APPLICATION_PLANE_INFRA_FOLDER="/home/ec2-user/environment/eks-saas-gitops-aws/terraform/application-plane/production/environments"
 
@@ -76,6 +106,8 @@ sed -e "s|{AWS_REGION}|${AWS_REGION}|g" "${APPLICATION_PLANE_INFRA_FOLDER}/provi
 sed -i "s|{TERRAFORM_STATE_BUCKET}|${TENANT_TERRAFORM_STATE_BUCKET_NAME}|g" "${APPLICATION_PLANE_INFRA_FOLDER}/providers.tf"
 
 cd $APPLICATION_PLANE_INFRA_FOLDER && terraform init && terraform apply -auto-approve
+
+echo "Changing template files to terraform output values"
 
 # Changing template files to use the new values
 export GITOPS_FOLDER="/home/ec2-user/environment/eks-saas-gitops-aws/gitops"
@@ -97,6 +129,8 @@ sed -i "s|{PRODUCER_ECR}|${ECR_PRODUCER_CONTAINER}|g" "${TENANT_CHART_FOLER}/val
 
 # Building containers and push to ECR
 cd /home/ec2-user/environment/eks-saas-gitops-aws
+
+echo "Push Images to Amazon ECR"
 
 # Build & Push Tenant Helm Chart
 aws ecr get-login-password \
@@ -127,12 +161,14 @@ aws ecr get-login-password \
 docker build --build-arg aws_region=${AWS_REGION} -t $ECR_ARGOWORKFLOW_CONTAINER tenant-onboarding
 docker push $ECR_ARGOWORKFLOW_CONTAINER
 
+echo "First commit CodeCommit repository"
+
 git checkout -b main
 git add .
 git commit -m 'Initial Setup'
 git push origin main
 
-chown -R ec2-user:ec2-user /home/ec2-user/environment/eks-saas-gitops-aws
+echo "Creating SSH file for Flux and Argo"
 
 # Create key and adding into codecommit-user
 cd /home/ec2-user/environment/
@@ -144,6 +180,7 @@ ssh-keyscan "git-codecommit.${AWS_REGION}.amazonaws.com" > /home/ec2-user/enviro
 
 export TERRAFORM_CLUSTER_FOLDER="/home/ec2-user/environment/eks-saas-gitops-aws/terraform/clusters/production"
 
+echo "Creating Flux secret"
 # Clear the YAML file if it exists
 > ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
 
@@ -170,21 +207,47 @@ modified_clone_url="ssh://${ssh_public_key_id}@$(echo ${AWS_CODECOMMIT_CLONE_URL
 
 export CLONE_URL_CODECOMMIT_USER=${modified_clone_url} && echo "export CLONE_URL_CODECOMMIT_USER=${CLONE_URL_CODECOMMIT_USER}" >> /home/ec2-user/.bashrc
 
+echo "Applying Terraform to deploy flux"
+
 terraform init && terraform apply -var "git_url=${CLONE_URL_CODECOMMIT_USER}" -var "aws_region=${AWS_REGION}" -auto-approve
+
+echo "Final setup commit"
 
 cd /home/ec2-user/environment/eks-saas-gitops-aws
 git add .
 git commit -m 'Flux system sync including private key'
 git push origin main
 
-chown -R ec2-user:ec2-user /home/ec2-user/environment/
-
 # Defining EKS context
 aws eks --region $AWS_REGION update-kubeconfig --name eks-saas-gitops
 
 # Creating secret for Argo Workflows
+echo "Creating Argo Workflows secret ssh"
 cp /home/ec2-user/environment/flux /home/ec2-user/environment/id_rsa
+
+NAMESPACE_CREATED=false
+
+# Loop until the namespace is created
+while [ "$NAMESPACE_CREATED" = false ]; do
+  # Query the Kubernetes API to check if the 'argo-workflows' namespace exists
+     kubectl get namespace argo-workflows &> /dev/null
+
+     # Check the exit status of the kubectl command
+     if [ $? -eq 0 ]; then
+          echo "argo-workflows namespace has been created."
+          NAMESPACE_CREATED=true
+     else
+          echo "Waiting for argo-workflows namespace to be created..."
+          sleep 5 # Wait for 5 seconds before checking again
+     fi
+done
+
 kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=/home/ec2-user/environment/id_rsa --from-literal=ssh-privatekey.mode=0600 -nargo-workflows
 
+echo "Configuring kubectl access for ec2-user"
 # Giving access to EC2 user
 mkdir -p /home/ec2-user/.kube && cp /root/.kube/config /home/ec2-user/.kube/ && chown -R ec2-user:ec2-user /home/ec2-user/.kube/config
+
+echo "Changing permissions for ec2-user"
+
+chown -R ec2-user:ec2-user /home/ec2-user/environment/
