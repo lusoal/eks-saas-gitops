@@ -121,7 +121,7 @@ sed -i "s|{KARPENTER_INSTANCE_PROFILE}|${KARPENTER_INSTANCE_PROFILE}|g" "${GITOP
 sed -e "s|{ARGO_WORKFLOW_IRSA}|${ARGO_WORKFLOWS_IRSA}|g" "${GITOPS_FOLDER}/infrastructure/production/03-argo-workflows.yaml.template" > "${GITOPS_FOLDER}/infrastructure/production/03-argo-workflows.yaml"
 sed -i "s|{ARGO_WORKFLOW_BUCKET}|${ARGO_WORKFLOWS_BUCKET_NAME}|g" "${GITOPS_FOLDER}/infrastructure/production/03-argo-workflows.yaml"
 sed -e "s|{LB_CONTROLLER_IRSA}|${LB_CONTROLLER_IRSA}|g" "${GITOPS_FOLDER}/infrastructure/production/04-lb-controller.yaml.template" > ${GITOPS_FOLDER}/infrastructure/production/04-lb-controller.yaml
-sed -i "s|{ARGO_WORKFLOW_CONTAINER}|${ECR_ARGOWORKFLOW_CONTAINER}|g" "${GITOPS_FOLDER}/control-plane/production/tenant-onboarding-workflow-template.yaml"
+sed -i "s|{ARGO_WORKFLOW_CONTAINER}|${ECR_ARGOWORKFLOW_CONTAINER}|g" "${GITOPS_FOLDER}/control-plane/production/workflows/tenant-onboarding-workflow-template.yaml"
 
 sed -e "s|{CONSUMER_ECR}|${ECR_CONSUMER_CONTAINER}|g" "${TENANT_CHART_FOLER}/values.yaml.template" > ${TENANT_CHART_FOLER}/values.yaml
 sed -i "s|{PRODUCER_ECR}|${ECR_PRODUCER_CONTAINER}|g" "${TENANT_CHART_FOLER}/values.yaml"
