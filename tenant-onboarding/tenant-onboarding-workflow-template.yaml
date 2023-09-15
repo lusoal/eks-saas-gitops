@@ -11,7 +11,7 @@ spec:
       container:
         image: "{ARGO_WORKFLOW_CONTAINER}"
         command: ["/bin/sh","-c"]
-        args: ['cp /tmp/id_rsa /root/.ssh/ && chmod 600 /root/.ssh/id_rsa && ./01-tenant-clone-repo.sh {{workflow.parameters.REPO_URL}} {{workflow.parameters.GIT_BRANCH}} && cp -r eks-saas-gitops /mnt/vol'] # Create Tenant infra script
+        args: ['cp /tmp/id_rsa /root/.ssh/ && chmod 600 /root/.ssh/id_rsa && ./01-tenant-clone-repo.sh {{workflow.parameters.REPO_URL}} {{workflow.parameters.GIT_BRANCH}} && cp -r eks-saas-gitops-aws /mnt/vol/eks-saas-gitops'] # Create Tenant infra script
         volumeMounts:
         - name: workdir
           mountPath: /mnt/vol
