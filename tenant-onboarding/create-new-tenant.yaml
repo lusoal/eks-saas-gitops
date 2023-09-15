@@ -19,7 +19,7 @@ spec:
       - name: GIT_USER_EMAIL
         value: "workshop.user@example.com"
       - name: GIT_USERNAME
-        value: "{CODECOMMIT_USER}"
+        value: "{CODECOMMIT_USER_ID}"
       - name: GIT_BRANCH
         value: "main" # Can change based on your configs
   templates:

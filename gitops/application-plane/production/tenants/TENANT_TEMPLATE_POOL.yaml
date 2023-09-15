@@ -7,7 +7,7 @@ spec:
   releaseName: TENANT_ID
   targetNamespace: pool-1
   storageNamespace: pool-1
-  interval: 10m0s
+  interval: 1m0s
   chart:
     spec:
       chart: helm-tenant-chart

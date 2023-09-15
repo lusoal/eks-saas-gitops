@@ -205,6 +205,13 @@ ssh_public_key_id=$(aws iam list-ssh-public-keys --user-name codecommit-user --q
 modified_clone_url="ssh://${ssh_public_key_id}@$(echo ${AWS_CODECOMMIT_CLONE_URL_SSH} | cut -d'/' -f3-)"
 
 export CLONE_URL_CODECOMMIT_USER=${modified_clone_url} && echo "export CLONE_URL_CODECOMMIT_USER=${CLONE_URL_CODECOMMIT_USER}" >> /home/ec2-user/.bashrc
+export CODECOMMIT_USER_ID=$(aws iam list-ssh-public-keys --user-name codecommit-user | jq -r '.SSHPublicKeys[0].SSHPublicKeyId') && echo "export CODECOMMIT_USER_ID=${CODECOMMIT_USER_ID}" >> /home/ec2-user/.bashrc
+export TENANT_ONBOARDING_FOLDER="/home/ec2-user/environment/eks-saas-gitops-aws/tenant-onboarding"
+
+# Changing Workflow Call manifest
+sed -i "s|{REPO_URL}|${CLONE_URL_CODECOMMIT_USER}|g" "${TENANT_ONBOARDING_FOLDER}/create-new-tenant.yaml"
+sed -i "s|{AWS_REGION}|${AWS_REGION}|g" "${TENANT_ONBOARDING_FOLDER}/create-new-tenant.yaml"
+sed -i "s|{CODECOMMIT_USER}|${CODECOMMIT_USER_ID}|g" "${TENANT_ONBOARDING_FOLDER}/create-new-tenant.yaml"
 
 echo "Applying Terraform to deploy flux"
 
