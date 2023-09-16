@@ -80,19 +80,49 @@ done
 
 source /home/ec2-user/.bashrc
 
+# Defining variables for CodeCommit
 echo "Configuring Cloud9 User to CodeCommit"
+ssh_public_key_id=$(aws iam list-ssh-public-keys --user-name codecommit-user --query "SSHPublicKeys[0].SSHPublicKeyId" --output text)
+modified_clone_url="ssh://${ssh_public_key_id}@$(echo ${AWS_CODECOMMIT_CLONE_URL_SSH} | cut -d'/' -f3-)"
+export CODECOMMIT_USER_ID=$(aws iam list-ssh-public-keys --user-name codecommit-user | jq -r '.SSHPublicKeys[0].SSHPublicKeyId') && echo "export CODECOMMIT_USER_ID=${CODECOMMIT_USER_ID}" >> /home/ec2-user/.bashrc
+export CLONE_URL_CODECOMMIT_USER=${modified_clone_url} && echo "export CLONE_URL_CODECOMMIT_USER=${CLONE_URL_CODECOMMIT_USER}" >> /home/ec2-user/.bashrc
 
-# Configuring Git user for Cloud9
-git config --global user.name "Workshop User"
+# Configuring email for CodeCommit User
+git config --global user.name "${CODECOMMIT_USER_ID}"
 git config --global user.email workshop.user@example.com
-git config --global credential.helper '!aws codecommit credential-helper $@'
-git config --global credential.UseHttpPath true
 
-echo "Cloning CodeCommit repository and copying files"
+# Creating SSH Key for CodeCommit User
+ssh-keygen -t rsa -b 4096 -f flux -N ""
+aws iam upload-ssh-public-key --user-name codecommit-user --ssh-public-key-body file:///home/ec2-user/environment/flux.pub
+ssh-keyscan "git-codecommit.${AWS_REGION}.amazonaws.com" > /home/ec2-user/environment/temp_known_hosts
+
+# Configuring Key for root
+cp /home/ec2-user/environment/flux /root/.ssh/id_rsa && chmod 600 /root/.ssh/id_rsa
+cat <<EOF > /root/.ssh/config
+Host git-codecommit.*.amazonaws.com
+  User ${CODECOMMIT_USER_ID}
+  IdentityFile /root/.ssh/id_rsa
+EOF
+chmod 600 /root/.ssh/config
+ssh-keyscan "git-codecommit.${AWS_REGION}.amazonaws.com" > /root/.ssh/known_hosts
+
+# Configuring Key for Ec2-User
+cp /home/ec2-user/environment/flux /home/ec2-user/.ssh/id_rsa && chmod 600 /home/ec2-user/.ssh/id_rsa
+cat <<EOF > /home/ec2-user/.ssh/config
+Host git-codecommit.*.amazonaws.com
+  User ${CODECOMMIT_USER_ID}
+  IdentityFile /home/ec2-user/.ssh/id_rsa
+EOF
+chmod 600 /home/ec2-user/.ssh/config
+ssh-keyscan "git-codecommit.${AWS_REGION}.amazonaws.com" > /home/ec2-user/known_hosts
+chown -R ec2-user:ec2-user /home/ec2-user/.ssh/
 
 # Cloning code commit repository and copying files to the git repository
+echo "Cloning CodeCommit repository and copying files"
+
 cd /home/ec2-user/environment
-git clone $AWS_CODECOMMIT_CLONE_URL_HTTP
+git clone $CLONE_URL_CODECOMMIT_USER
+
 cp -r /home/ec2-user/environment/eks-saas-gitops/* /home/ec2-user/environment/eks-saas-gitops-aws
 cp /home/ec2-user/environment/eks-saas-gitops/.gitignore /home/ec2-user/environment/eks-saas-gitops-aws/.gitignore
 rm -rf /home/ec2-user/environment/eks-saas-gitops
@@ -171,11 +201,6 @@ echo "Creating SSH file for Flux and Argo"
 
 # Create key and adding into codecommit-user
 cd /home/ec2-user/environment/
-ssh-keygen -t rsa -b 4096 -f flux -N ""
-
-aws iam upload-ssh-public-key --user-name codecommit-user --ssh-public-key-body file:///home/ec2-user/environment/flux.pub
-
-ssh-keyscan "git-codecommit.${AWS_REGION}.amazonaws.com" > /home/ec2-user/environment/temp_known_hosts
 
 export TERRAFORM_CLUSTER_FOLDER="/home/ec2-user/environment/eks-saas-gitops-aws/terraform/clusters/production"
 
@@ -201,11 +226,7 @@ echo "    known_hosts: |" >> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
 cat /home/ec2-user/environment/temp_known_hosts | sed 's/^/      /' >> ${TERRAFORM_CLUSTER_FOLDER}/values.yaml
 
 cd $TERRAFORM_CLUSTER_FOLDER
-ssh_public_key_id=$(aws iam list-ssh-public-keys --user-name codecommit-user --query "SSHPublicKeys[0].SSHPublicKeyId" --output text)
-modified_clone_url="ssh://${ssh_public_key_id}@$(echo ${AWS_CODECOMMIT_CLONE_URL_SSH} | cut -d'/' -f3-)"
 
-export CLONE_URL_CODECOMMIT_USER=${modified_clone_url} && echo "export CLONE_URL_CODECOMMIT_USER=${CLONE_URL_CODECOMMIT_USER}" >> /home/ec2-user/.bashrc
-export CODECOMMIT_USER_ID=$(aws iam list-ssh-public-keys --user-name codecommit-user | jq -r '.SSHPublicKeys[0].SSHPublicKeyId') && echo "export CODECOMMIT_USER_ID=${CODECOMMIT_USER_ID}" >> /home/ec2-user/.bashrc
 export TENANT_ONBOARDING_FOLDER="/home/ec2-user/environment/eks-saas-gitops-aws/tenant-onboarding"
 
 # Changing Workflow Call manifest
