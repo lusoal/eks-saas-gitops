@@ -81,6 +81,7 @@ done
 source /home/ec2-user/.bashrc
 
 # Defining variables for CodeCommit
+cd /home/ec2-user/environment/
 echo "Configuring Cloud9 User to CodeCommit"
 ssh-keygen -t rsa -b 4096 -f flux -N ""
 aws iam upload-ssh-public-key --user-name codecommit-user --ssh-public-key-body file:///home/ec2-user/environment/flux.pub
