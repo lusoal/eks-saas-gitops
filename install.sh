@@ -197,9 +197,7 @@ git add .
 git commit -m 'Initial Setup'
 git push origin main
 
-echo "Creating SSH file for Flux and Argo"
-
-# Create key and adding into codecommit-user
+echo "Configuring Flux and Argo to use SSH Key"
 cd /home/ec2-user/environment/
 
 export TERRAFORM_CLUSTER_FOLDER="/home/ec2-user/environment/eks-saas-gitops-aws/terraform/clusters/production"
