@@ -83,14 +83,16 @@ source /home/ec2-user/.bashrc
 # Defining variables for CodeCommit
 cd /home/ec2-user/environment/
 echo "Configuring Cloud9 User to CodeCommit"
-ssh-keygen -t rsa -b 4096 -f flux -N ""
-aws iam upload-ssh-public-key --user-name codecommit-user --ssh-public-key-body file:///home/ec2-user/environment/flux.pub
+# ssh-keygen -t rsa -b 4096 -f flux -N ""
+# aws iam upload-ssh-public-key --user-name codecommit-user --ssh-public-key-body file:///home/ec2-user/environment/flux.pub
 
 ssh_public_key_id=$(aws iam list-ssh-public-keys --user-name codecommit-user --query "SSHPublicKeys[0].SSHPublicKeyId" --output text)
 modified_clone_url="ssh://${ssh_public_key_id}@$(echo ${AWS_CODECOMMIT_CLONE_URL_SSH} | cut -d'/' -f3-)"
 export CODECOMMIT_USER_ID=$(aws iam list-ssh-public-keys --user-name codecommit-user | jq -r '.SSHPublicKeys[0].SSHPublicKeyId') && echo "export CODECOMMIT_USER_ID=${CODECOMMIT_USER_ID}" >> /home/ec2-user/.bashrc
 export CLONE_URL_CODECOMMIT_USER=${modified_clone_url} && echo "export CLONE_URL_CODECOMMIT_USER=${CLONE_URL_CODECOMMIT_USER}" >> /home/ec2-user/.bashrc
 
+#Init variables
+source /home/ec2-user/.bashrc
 # Configuring email for CodeCommit User
 git config --global user.name "${CODECOMMIT_USER_ID}"
 git config --global user.email workshop.user@example.com
