@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 trap 'catch_error $? $LINENO' ERR
+touch /home/ec2-user/environment/install_errors.txt
 
 catch_error() {
      echo "Error $1 occurred on $2" >> /home/ec2-user/environment/install_errors.txt
