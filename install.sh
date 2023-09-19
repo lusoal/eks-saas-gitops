@@ -112,8 +112,8 @@ echo "export CLONE_URL_CODECOMMIT_USER=${CLONE_URL_CODECOMMIT_USER}" >> /root/.b
 source /root/.bashrc
 
 # Configuring email for CodeCommit User
-git config --global user.name "${CODECOMMIT_USER_ID}"
-git config --global user.email workshop.user@example.com
+# git config --global user.name "${CODECOMMIT_USER_ID}"
+# git config --global user.email workshop.user@example.com
 
 # Creating SSH Key for CodeCommit User
 ssh-keyscan "git-codecommit.${AWS_REGION}.amazonaws.com" > /home/ec2-user/environment/temp_known_hosts
