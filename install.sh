@@ -1,4 +1,10 @@
 #!/bin/bash
+set -e
+trap 'catch_error $? $LINENO' ERR
+
+catch_error() {
+     echo "Error $1 occurred on $2" >> /home/ec2-user/environment/install_errors.txt
+}
 
 export AWS_REGION="$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -d'"' -f4)"
 # APPLY TERRAFORM NO FLUX
