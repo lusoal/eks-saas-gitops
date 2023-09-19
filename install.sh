@@ -269,16 +269,16 @@ git push origin main
 # Defining EKS context
 aws eks --region $AWS_REGION update-kubeconfig --name eks-saas-gitops
 
-# Creating secret for Argo Workflows
-echo "Creating Argo Workflows secret ssh"
-
-sleep 120
-
-kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=/home/ec2-user/environment/id_rsa --from-literal=ssh-privatekey.mode=0600 -nargo-workflows
-
 echo "Configuring kubectl access for ec2-user"
 # Giving access to EC2 user
 mkdir -p /home/ec2-user/.kube && cp /root/.kube/config /home/ec2-user/.kube/ && chown -R ec2-user:ec2-user /home/ec2-user/.kube/config
+
+# Creating secret for Argo Workflows
+echo "Creating Argo Workflows secret ssh"
+
+sleep 200
+
+kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=/home/ec2-user/environment/id_rsa --from-literal=ssh-privatekey.mode=0600 -nargo-workflows
 
 sleep 60
 
