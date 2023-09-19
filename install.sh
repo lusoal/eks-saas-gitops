@@ -276,9 +276,9 @@ mkdir -p /home/ec2-user/.kube && cp /root/.kube/config /home/ec2-user/.kube/ && 
 # Creating secret for Argo Workflows
 echo "Creating Argo Workflows secret ssh"
 
-sleep 200
+sleep 120
 
-kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=/home/ec2-user/environment/id_rsa --from-literal=ssh-privatekey.mode=0600 -nargo-workflows
+kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=/home/ec2-user/environment/flux --from-literal=ssh-privatekey.mode=0600 -nargo-workflows
 
 sleep 60
 
