@@ -273,14 +273,7 @@ echo "Configuring kubectl access for ec2-user"
 # Giving access to EC2 user
 mkdir -p /home/ec2-user/.kube && cp /root/.kube/config /home/ec2-user/.kube/ && chown -R ec2-user:ec2-user /home/ec2-user/.kube/config
 
-# Creating secret for Argo Workflows
-echo "Creating Argo Workflows secret ssh"
-
 sleep 120
-
-kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=/home/ec2-user/environment/flux --from-literal=ssh-privatekey.mode=0600 -nargo-workflows
-
-sleep 60
 
 echo "Verifying if any installation needs to be reconciled"
 helm uninstall kubecost -nkubecost
@@ -291,3 +284,8 @@ flux reconcile helmrelease karpenter -nflux-system
 
 echo "Changing permissions for ec2-user"
 chown -R ec2-user:ec2-user /home/ec2-user/environment/
+
+# Creating secret for Argo Workflows
+echo "Creating Argo Workflows secret ssh"
+
+kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=/home/ec2-user/environment/flux --from-literal=ssh-privatekey.mode=0600 -nargo-workflows
