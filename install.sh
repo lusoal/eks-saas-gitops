@@ -276,22 +276,7 @@ aws eks --region $AWS_REGION update-kubeconfig --name eks-saas-gitops
 # Creating secret for Argo Workflows
 echo "Creating Argo Workflows secret ssh"
 
-NAMESPACE_CREATED=false
-
-# Loop until the namespace is created
-while [ "$NAMESPACE_CREATED" = false ]; do
-  # Query the Kubernetes API to check if the 'argo-workflows' namespace exists
-     kubectl get namespace argo-workflows &> /dev/null
-
-     # Check the exit status of the kubectl command
-     if [ $? -eq 0 ]; then
-          echo "argo-workflows namespace has been created."
-          NAMESPACE_CREATED=true
-     else
-          echo "Waiting for argo-workflows namespace to be created..."
-          sleep 5 # Wait for 5 seconds before checking again
-     fi
-done
+sleep 120
 
 kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=/home/ec2-user/environment/id_rsa --from-literal=ssh-privatekey.mode=0600 -nargo-workflows
 
