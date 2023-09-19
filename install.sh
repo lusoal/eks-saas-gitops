@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export AWS_REGION="$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -d'"' -f4)"
 # APPLY TERRAFORM NO FLUX
 cd /home/ec2-user/environment/eks-saas-gitops/terraform/clusters/production
 
@@ -128,7 +129,7 @@ echo "Cloning CodeCommit repository and copying files"
 cd /home/ec2-user/environment
 git clone $CLONE_URL_CODECOMMIT_USER
 
-sleep 300
+sleep 20
 
 cp -r /home/ec2-user/environment/eks-saas-gitops/* /home/ec2-user/environment/eks-saas-gitops-aws
 cp /home/ec2-user/environment/eks-saas-gitops/.gitignore /home/ec2-user/environment/eks-saas-gitops-aws/.gitignore
@@ -279,6 +280,8 @@ kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=/home/ec
 echo "Configuring kubectl access for ec2-user"
 # Giving access to EC2 user
 mkdir -p /home/ec2-user/.kube && cp /root/.kube/config /home/ec2-user/.kube/ && chown -R ec2-user:ec2-user /home/ec2-user/.kube/config
+
+sleep 60
 
 echo "Verifying if any installation needs to be reconciled"
 helm uninstall kubecost -nkubecost
