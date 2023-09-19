@@ -305,7 +305,7 @@ echo "Verifying if any installation needs to be reconciled"
 helm uninstall kubecost -nkubecost
 flux reconcile helmrelease kubecost -nflux-system
 
-helm uninstall karpenter -karpenter
+helm uninstall karpenter -nkarpenter
 flux reconcile helmrelease karpenter -nflux-system
 
 echo "Changing permissions for ec2-user"
