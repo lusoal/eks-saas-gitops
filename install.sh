@@ -8,6 +8,8 @@ catch_error() {
 }
 
 export AWS_REGION="$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -d'"' -f4)"
+echo "export AWS_REGION=${AWS_REGION}" >> /root/.bashrc
+
 # APPLY TERRAFORM NO FLUX
 cd /home/ec2-user/environment/eks-saas-gitops/terraform/clusters/production
 
@@ -87,6 +89,8 @@ for output in "${outputs[@]}"; do
     echo "export ${output^^}=$value" >> /root/.bashrc
 done
 
+source /root/.bashrc
+
 # Defining variables for CodeCommit
 cd /home/ec2-user/environment/
 
@@ -141,9 +145,10 @@ echo "Cloning CodeCommit repository and copying files"
 cd /home/ec2-user/environment
 source /root/.bashrc
 
-git clone $CLONE_URL_CODECOMMIT_USER
+echo "Cloning CodeCommit repository and copying files"
+sleep 60
 
-sleep 20
+git clone $CLONE_URL_CODECOMMIT_USER
 
 cp -r /home/ec2-user/environment/eks-saas-gitops/* /home/ec2-user/environment/eks-saas-gitops-aws
 cp /home/ec2-user/environment/eks-saas-gitops/.gitignore /home/ec2-user/environment/eks-saas-gitops-aws/.gitignore
@@ -270,7 +275,6 @@ aws eks --region $AWS_REGION update-kubeconfig --name eks-saas-gitops
 
 # Creating secret for Argo Workflows
 echo "Creating Argo Workflows secret ssh"
-cp /home/ec2-user/environment/flux /home/ec2-user/environment/id_rsa
 
 NAMESPACE_CREATED=false
 
