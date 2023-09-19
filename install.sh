@@ -82,8 +82,8 @@ outputs=("argo_workflows_bucket_name"
 
 for output in "${outputs[@]}"; do
     value=$(terraform output -raw $output)
-    export ${output^^}=$value # Exporting variables to be available during script sessions execution
     echo "export ${output^^}=$value" >> /home/ec2-user/.bashrc
+    echo "export ${output^^}=$value" >> /root/.bashrc
 done
 
 # Defining variables for CodeCommit
@@ -98,8 +98,13 @@ modified_clone_url="ssh://${ssh_public_key_id}@$(echo ${AWS_CODECOMMIT_CLONE_URL
 
 export CODECOMMIT_USER_ID=$(aws iam list-ssh-public-keys --user-name codecommit-user | jq -r '.SSHPublicKeys[0].SSHPublicKeyId')
 echo "export CODECOMMIT_USER_ID=${CODECOMMIT_USER_ID}" >> /home/ec2-user/.bashrc
+echo "export CODECOMMIT_USER_ID=${CODECOMMIT_USER_ID}" >> /root/.bashrc
+
 export CLONE_URL_CODECOMMIT_USER=${modified_clone_url}
 echo "export CLONE_URL_CODECOMMIT_USER=${CLONE_URL_CODECOMMIT_USER}" >> /home/ec2-user/.bashrc
+echo "export CLONE_URL_CODECOMMIT_USER=${CLONE_URL_CODECOMMIT_USER}" >> /root/.bashrc
+
+source /root/.bashrc
 
 # Configuring email for CodeCommit User
 git config --global user.name "${CODECOMMIT_USER_ID}"
@@ -133,6 +138,8 @@ chown -R ec2-user:ec2-user /home/ec2-user/.ssh/
 echo "Cloning CodeCommit repository and copying files"
 
 cd /home/ec2-user/environment
+source /root/.bashrc
+
 git clone $CLONE_URL_CODECOMMIT_USER
 
 sleep 20
