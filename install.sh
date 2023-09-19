@@ -275,12 +275,14 @@ mkdir -p /home/ec2-user/.kube && cp /root/.kube/config /home/ec2-user/.kube/ && 
 
 sleep 120
 
-echo "Verifying if any installation needs to be reconciled"
-helm uninstall kubecost -nkubecost
-flux reconcile helmrelease kubecost -nflux-system
+aws eks --region $AWS_REGION update-kubeconfig --name eks-saas-gitops
 
-helm uninstall karpenter -nkarpenter
-flux reconcile helmrelease karpenter -nflux-system
+echo "Verifying if any installation needs to be reconciled"
+helm uninstall kubecost -nkubecost --kubeconfig /root/.kube/config
+flux reconcile helmrelease kubecost -nflux-system --kubeconfig /root/.kube/config
+
+helm uninstall karpenter -nkarpenter --kubeconfig /root/.kube/config
+flux reconcile helmrelease karpenter -nflux-system --kubeconfig /root/.kube/config
 
 echo "Changing permissions for ec2-user"
 chown -R ec2-user:ec2-user /home/ec2-user/environment/
@@ -288,4 +290,4 @@ chown -R ec2-user:ec2-user /home/ec2-user/environment/
 # Creating secret for Argo Workflows
 echo "Creating Argo Workflows secret ssh"
 
-kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=/home/ec2-user/environment/flux --from-literal=ssh-privatekey.mode=0600 -nargo-workflows
+kubectl create secret generic github-ssh-key --from-file=ssh-privatekey=/home/ec2-user/environment/flux --from-literal=ssh-privatekey.mode=0600 -nargo-workflows --kubeconfig /root/.kube/config
