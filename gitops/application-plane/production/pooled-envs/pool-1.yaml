@@ -36,11 +36,11 @@ spec:
   releaseName: pooled-tenants
   targetNamespace: pool-1
   storageNamespace: pool-1
-  interval: 10m0s
+  interval: 1m0s
   chart:
     spec:
       chart: helm-tenant-chart
-      version: 0.0.1
+      version: 0.x.x
       sourceRef:
         kind: HelmRepository
         name: helm-tenant-chart

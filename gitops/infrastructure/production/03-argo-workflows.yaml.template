@@ -76,6 +76,8 @@ spec:
         - argo-workflows
     server:
       serviceType: LoadBalancer
+      serviceAnnotations:
+        service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
       serviceAccount:
         annotations: 
           eks.amazonaws.com/role-arn: {ARGO_WORKFLOW_IRSA}

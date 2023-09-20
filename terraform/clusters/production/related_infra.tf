@@ -3,7 +3,7 @@
 ################################################################################
 
 resource "aws_iam_role" "karpenter_node_role" {
-  name = "KarpenterNodeRole-${var.name}"
+  name               = "KarpenterNodeRole-${var.name}"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -74,12 +74,12 @@ resource "aws_iam_instance_profile" "karpenter_instance_profile" {
 # Karpenter IRSA
 ################################################################################
 module "karpenter_irsa_role" {
-  source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name                          = "karpenter_controller"
   attach_karpenter_controller_policy = true
 
-  karpenter_controller_cluster_name         = module.eks.cluster_name
+  karpenter_controller_cluster_name       = module.eks.cluster_name
   karpenter_controller_node_iam_role_arns = [aws_iam_role.karpenter_node_role.arn]
 
   attach_vpc_cni_policy = true
@@ -104,9 +104,9 @@ resource "aws_iam_policy" "karpenter-policy" {
     Version = "2012-10-17"
     Statement = [
       {
-            "Effect": "Allow",
-            "Action": "*",
-            "Resource": "*"
+        "Effect" : "Allow",
+        "Action" : "*",
+        "Resource" : "*"
       }
     ]
   })
@@ -117,7 +117,7 @@ resource "aws_iam_policy_attachment" "karpenter_policy_attach" {
   name       = "karpenter-admin"
   roles      = [module.karpenter_irsa_role.iam_role_name]
   policy_arn = aws_iam_policy.karpenter-policy.arn
-  users = []
+  users      = []
 
   lifecycle {
     ignore_changes = [
@@ -156,7 +156,7 @@ resource "aws_s3_bucket" "argo-artifacts" {
   bucket = "saasgitops-argo-${random_uuid.uuid.result}"
 
   tags = {
-    Blueprint  = var.name
+    Blueprint = var.name
   }
 }
 
@@ -223,7 +223,7 @@ resource "aws_ecr_repository" "producer_container" {
 # EBS CSI Driver IRSA
 ################################################################################
 module "ebs_csi_irsa_role" {
-  source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name = "ebs-csi"
 
@@ -247,6 +247,26 @@ resource "aws_s3_bucket" "tenant-terraform-state-bucket" {
   bucket = "saasgitops-terraform-${random_uuid.uuid.result}"
 
   tags = {
-    Blueprint  = var.name
+    Blueprint = var.name
   }
+}
+
+################################################################################
+# CODE COMMIT needs for flux
+################################################################################
+module "codecommit-flux" {
+  source          = "lgallard/codecommit/aws"
+  version         = "0.2.1"
+  default_branch  = "main"
+  description     = "Flux GitOps repository"
+  repository_name = "eks-saas-gitops-aws"
+}
+
+resource "aws_iam_user" "codecommit-user" {
+  name = "codecommit-user"
+}
+
+resource "aws_iam_user_policy_attachment" "codecommit-user-attach" {
+  user       = aws_iam_user.codecommit-user.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSCodeCommitPowerUser"
 }

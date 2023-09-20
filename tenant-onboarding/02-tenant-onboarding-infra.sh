@@ -39,6 +39,14 @@ terraform init
 terraform plan
 terraform apply -auto-approve
 
+cat <<EOF > /root/.ssh/config
+Host git-codecommit.*.amazonaws.com
+  User ${git_user_name}
+  IdentityFile /root/.ssh/id_rsa
+EOF
+
+chmod 600 /root/.ssh/config
+
 git config --global user.email "${git_user_email}"
 git config --global user.name "${git_user_name}"
 

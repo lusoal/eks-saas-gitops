@@ -9,17 +9,17 @@ spec:
   arguments:
     parameters:
       - name: REPO_URL
-        value: "git@github.com:{GITHUB_USERNAME}/eks-saas-gitops.git"
+        value: "{REPO_URL}"
       - name: AWS_REGION
-        value: "us-west-2"
+        value: "{AWS_REGION}"
       - name: TENANT_ID
         value: "tenant-2" # ID of your tenant, use this patter eg. tenant-xx (tenant-10, tenant-11)
       - name: TENANT_MODEL
         value: "siloed" # Valid values are: siloed, pooled, hybrid
       - name: GIT_USER_EMAIL
-        value: "{GIT_USER_EMAIL}"
+        value: "workshop.user@example.com"
       - name: GIT_USERNAME
-        value: "{GITHUB_USERNAME}"
+        value: "{CODECOMMIT_USER_ID}"
       - name: GIT_BRANCH
         value: "main" # Can change based on your configs
   templates:
